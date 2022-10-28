@@ -23,8 +23,8 @@ public class T1 extends LinearOpMode{
     @Override
     public void runOpMode() {
 
-        FL  = hardwareMap.get(DcMotor.class, "FL");
-        FR  = hardwareMap.get(DcMotor.class, "FR");
+        FL = hardwareMap.get(DcMotor.class, "FL");
+        FR = hardwareMap.get(DcMotor.class, "FR");
         BL = hardwareMap.get(DcMotor.class, "BL");
         BR = hardwareMap.get(DcMotor.class, "BR");
         L1 = hardwareMap.get(DcMotor.class, "lift1");
@@ -34,6 +34,7 @@ public class T1 extends LinearOpMode{
         FR.setDirection(DcMotor.Direction.FORWARD);
         BL.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.FORWARD);
+
         L1.setDirection(DcMotor.Direction.REVERSE);
         L2.setDirection(DcMotor.Direction.REVERSE);
 
@@ -69,10 +70,12 @@ public class T1 extends LinearOpMode{
             if (gamepad1.right_bumper){
                 L1.setPower(1);
                 L1.setPower(1);
+                telemetry.addData("Status", "Going up");
             }
             else if (gamepad1.left_bumper){
                 L1.setPower(-1);
                 L1.setPower(-1);
+                telemetry.addData("Status", "Going down");
             }
             else{
                 L1.setPower(0);
