@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+// lift1     lift2
 @TeleOp(name="Main Teliop")
 public class T1 extends LinearOpMode{
 
@@ -16,6 +17,9 @@ public class T1 extends LinearOpMode{
     private DcMotor BL = null;
     private DcMotor BR = null;
 
+    private DcMotor L1 = null;
+    private DcMotor L2 = null;
+
     @Override
     public void runOpMode() {
 
@@ -23,11 +27,15 @@ public class T1 extends LinearOpMode{
         FR  = hardwareMap.get(DcMotor.class, "FR");
         BL = hardwareMap.get(DcMotor.class, "BL");
         BR = hardwareMap.get(DcMotor.class, "BR");
+        L1 = hardwareMap.get(DcMotor.class, "lift1");
+        L2 = hardwareMap.get(DcMotor.class, "lift2");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.FORWARD);
         BL.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.FORWARD);
+        L1.setDirection(DcMotor.Direction.REVERSE);
+        L2.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -56,6 +64,19 @@ public class T1 extends LinearOpMode{
                 FRP /= max;
                 BLP   /= max;
                 BRP  /= max;
+            }
+
+            if (gamepad1.right_bumper){
+                L1.setPower(1);
+                L1.setPower(1);
+            }
+            else if (gamepad1.left_bumper){
+                L1.setPower(-1);
+                L1.setPower(-1);
+            }
+            else{
+                L1.setPower(0);
+                L1.setPower(0);
             }
 
             FL.setPower(FLP);
