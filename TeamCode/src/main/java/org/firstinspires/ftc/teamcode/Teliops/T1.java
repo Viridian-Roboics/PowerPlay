@@ -22,7 +22,7 @@ public class T1 extends LinearOpMode{
     //lift Vars
     private DcMotor L1 = null;
     private DcMotor L2 = null;
-    private double Lspeed = .5;
+    private double Lspeed = .25;
 
     @Override
     public void runOpMode() {
