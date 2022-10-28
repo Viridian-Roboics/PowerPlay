@@ -10,15 +10,19 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 // lift1     lift2
 @TeleOp(name="Main Teliop")
 public class T1 extends LinearOpMode{
-
+    //general Vars
     private ElapsedTime runtime = new ElapsedTime();
+
+    //drive Vars
     private DcMotor FL = null;
     private DcMotor FR = null;
     private DcMotor BL = null;
     private DcMotor BR = null;
 
+    //lift Vars
     private DcMotor L1 = null;
     private DcMotor L2 = null;
+    private double Lspeed = .5;
 
     @Override
     public void runOpMode() {
@@ -68,13 +72,13 @@ public class T1 extends LinearOpMode{
             }
 
             if (gamepad1.right_bumper){
-                L1.setPower(1);
-                L1.setPower(1);
+                L1.setPower(Lspeed);
+                L1.setPower(Lspeed);
                 telemetry.addData("Status", "Going up");
             }
             else if (gamepad1.left_bumper){
-                L1.setPower(-1);
-                L1.setPower(-1);
+                L1.setPower(-Lspeed);
+                L1.setPower(-Lspeed);
                 telemetry.addData("Status", "Going down");
             }
             else{
