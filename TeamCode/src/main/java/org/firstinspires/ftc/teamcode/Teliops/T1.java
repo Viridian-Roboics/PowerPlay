@@ -26,7 +26,6 @@ public class T1 extends LinearOpMode{
 
     @Override
     public void runOpMode() {
-
         FL = hardwareMap.get(DcMotor.class, "FL");
         FR = hardwareMap.get(DcMotor.class, "FR");
         BL = hardwareMap.get(DcMotor.class, "BL");
