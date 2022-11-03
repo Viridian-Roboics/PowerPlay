@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 // lift1     lift2
@@ -23,6 +24,9 @@ public class T1 extends LinearOpMode{
     private DcMotor L1 = null;
     private DcMotor L2 = null;
     private double Lspeed = .25;
+
+    //servo Vars
+    private Servo MS = null;
 
     @Override
     public void runOpMode() {
@@ -50,9 +54,9 @@ public class T1 extends LinearOpMode{
         while (opModeIsActive()) {
             double max;
 
-            double axial   = -gamepad1.left_stick_y;
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double axial = -gamepad1.left_stick_y;
+            double lateral = gamepad1.left_stick_x;
+            double yaw = gamepad1.right_stick_x;
 
             double FLP  = axial + lateral + yaw;
             double FRP = axial - lateral - yaw;
@@ -70,19 +74,28 @@ public class T1 extends LinearOpMode{
                 BRP  /= max;
             }
 
+            //lift
             if (gamepad1.right_bumper){
                 L1.setPower(Lspeed);
-                L1.setPower(Lspeed);
+                L2.setPower(Lspeed);
                 telemetry.addData("Status", "Going up");
             }
             else if (gamepad1.left_bumper){
                 L1.setPower(-Lspeed);
-                L1.setPower(-Lspeed);
+                L2.setPower(-Lspeed);
                 telemetry.addData("Status", "Going down");
             }
             else{
                 L1.setPower(0);
-                L1.setPower(0);
+                L2.setPower(0);
+            }
+
+            //claw
+            if (gamepad1.a){
+                MS.setPosition(0);
+            }
+            if (gamepad1.b){
+                MS.setPosition(1);
             }
 
             FL.setPower(FLP);
