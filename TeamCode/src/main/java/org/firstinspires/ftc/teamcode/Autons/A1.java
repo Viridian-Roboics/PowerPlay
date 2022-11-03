@@ -50,6 +50,9 @@ public class A1 extends LinearOpMode{
     static final double P_TURN_GAIN = 0.02;
     static final double P_DRIVE_GAIN = 0.03;
 
+    //servo Vars
+    private Servo MS = null;
+
     @Override
     public void runOpMode() {
         FL = hardwareMap.get(DcMotor.class, "FL");
