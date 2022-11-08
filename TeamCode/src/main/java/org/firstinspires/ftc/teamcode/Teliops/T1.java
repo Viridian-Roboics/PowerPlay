@@ -38,6 +38,7 @@ public class T1 extends LinearOpMode{
         BR = hardwareMap.get(DcMotor.class, "BR");
         L1 = hardwareMap.get(DcMotor.class, "lift1");
         L2 = hardwareMap.get(DcMotor.class, "lift2");
+        L3 = hardwareMap.get(DcMotor.class, "lift3");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.FORWARD);
@@ -46,6 +47,7 @@ public class T1 extends LinearOpMode{
 
         L1.setDirection(DcMotor.Direction.REVERSE);
         L2.setDirection(DcMotor.Direction.REVERSE);
+        L3.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
