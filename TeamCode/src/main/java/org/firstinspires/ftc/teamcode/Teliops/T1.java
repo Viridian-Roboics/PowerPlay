@@ -19,10 +19,12 @@ public class T1 extends LinearOpMode{
     private DcMotor FR = null;
     private DcMotor BL = null;
     private DcMotor BR = null;
+    private static double CAP = .5;
 
     //lift Vars
     private DcMotor L1 = null;
     private DcMotor L2 = null;
+    private DcMotor L3 = null;
     private double Lspeed = .25;
 
     //servo Vars
@@ -67,27 +69,30 @@ public class T1 extends LinearOpMode{
             max = Math.max(max, Math.abs(BLP));
             max = Math.max(max, Math.abs(BLP));
 
-            if (max > 1.0) {
-                FLP  /= max;
-                FRP /= max;
-                BLP   /= max;
-                BRP  /= max;
+            if (max > CAP) {
+                FLP = FLP / max * CAP;
+                FRP = FLP / max * CAP;
+                BLP = max;
+                BRP = max;
             }
 
             //lift
             if (gamepad1.right_bumper){
                 L1.setPower(Lspeed);
                 L2.setPower(Lspeed);
+                L3.setPower(Lspeed);
                 telemetry.addData("Status", "Going up");
             }
             else if (gamepad1.left_bumper){
                 L1.setPower(-Lspeed);
                 L2.setPower(-Lspeed);
+                L3.setPower(Lspeed);
                 telemetry.addData("Status", "Going down");
             }
             else{
                 L1.setPower(0);
                 L2.setPower(0);
+                L3.setPower(0);
             }
 
             //claw
