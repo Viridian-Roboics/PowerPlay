@@ -25,7 +25,7 @@ public class T1 extends LinearOpMode{
     private DcMotor L1 = null;
     private DcMotor L2 = null;
     private DcMotor L3 = null;
-    private double Lspeed = .25;
+    private double Lspeed = 1;
 
     //servo Vars
 //    private Servo MS = null;
