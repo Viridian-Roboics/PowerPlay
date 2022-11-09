@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 // lift1     lift2
-@TeleOp(name="Main Teliop")
+@TeleOp(name="Teliop One")
 public class T1 extends LinearOpMode{
     //general Vars
     private ElapsedTime runtime = new ElapsedTime();
@@ -28,7 +28,7 @@ public class T1 extends LinearOpMode{
     private double Lspeed = .25;
 
     //servo Vars
-    private Servo MS = null;
+//    private Servo MS = null;
 
     @Override
     public void runOpMode() {
@@ -47,7 +47,7 @@ public class T1 extends LinearOpMode{
 
         L1.setDirection(DcMotor.Direction.REVERSE);
         L2.setDirection(DcMotor.Direction.REVERSE);
-        L3.setDirection(DcMotor.Direction.REVERSE);
+        L3.setDirection(DcMotor.Direction.FORWARD);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -88,7 +88,7 @@ public class T1 extends LinearOpMode{
             else if (gamepad1.left_bumper){
                 L1.setPower(-Lspeed);
                 L2.setPower(-Lspeed);
-                L3.setPower(Lspeed);
+                L3.setPower(-Lspeed);
                 telemetry.addData("Status", "Going down");
             }
             else{
@@ -98,12 +98,12 @@ public class T1 extends LinearOpMode{
             }
 
             //claw
-            if (gamepad1.a){
-                MS.setPosition(0);
-            }
-            if (gamepad1.b){
-                MS.setPosition(1);
-            }
+//            if (gamepad1.a){
+//                MS.setPosition(0);
+//            }
+//            if (gamepad1.b){
+//                MS.setPosition(1);
+//            }
 
             FL.setPower(FLP);
             FR.setPower(FRP);
