@@ -25,6 +25,9 @@ public class T1 extends LinearOpMode{
     private DcMotor L1 = null;
     private DcMotor L2 = null;
     private double Lspeed = 1;
+    private double LPos = 0;
+    private double LMin = 0;
+    private double LMax = 0;
 
     //servo Vars
     private Servo LServo = null;
@@ -38,6 +41,9 @@ public class T1 extends LinearOpMode{
         L1 = hardwareMap.get(DcMotor.class, "lift1");
         L2 = hardwareMap.get(DcMotor.class, "lift2");
         LServo = hardwareMap.get(Servo.class, "LServo");
+
+        L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        L2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.FORWARD);
@@ -108,6 +114,7 @@ public class T1 extends LinearOpMode{
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", FLP, FRP);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", BLP, BRP);
+            telemetry.addData("Lift Pos", "%4.2f", LPos);
             telemetry.update();
         }
     }
