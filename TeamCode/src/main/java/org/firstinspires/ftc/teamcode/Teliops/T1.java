@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.Set;
+
 // lift1     lift2
 @TeleOp(name="Teliop One")
 public class T1 extends LinearOpMode{
@@ -30,6 +32,8 @@ public class T1 extends LinearOpMode{
     private int BottomLift = 100;
     private int MiddleLift = 200;
     private int TopLift = 300;
+    private int ConeLift = 50;
+    private boolean SetPos = false;
 
     //servo Vars
     private Servo LServo = null;
@@ -86,31 +90,57 @@ public class T1 extends LinearOpMode{
 
             //lift
             if (gamepad1.right_bumper){
+                SetPos = false;
+                L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                L2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 L1.setPower(Lspeed);
                 L2.setPower(Lspeed);
                 telemetry.addData("Status", "Going up");
             }
             else if (gamepad1.left_bumper){
+                SetPos = false;
+                L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                L2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 L1.setPower(-Lspeed);
                 L2.setPower(-Lspeed);
                 telemetry.addData("Status", "Going down");
             }
-            else{
+            else if(!SetPos){
                 L1.setPower(0);
                 L2.setPower(0);
             }
 
-            if(gamepad1.dpad_up && L1.getCurrentPosition() <= TopLift){
+            if(gamepad1.dpad_up && L1.getCurrentPosition() != TopLift){
+                SetPos = true;
                 L1.setTargetPosition(TopLift);
                 L2.setTargetPosition(TopLift);
+                FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            else if(gamepad1.dpad_left && L1.getCurrentPosition() <= MiddleLift){
+            else if(gamepad1.dpad_left && L1.getCurrentPosition() != MiddleLift){
+                SetPos = true;
                 L1.setTargetPosition(MiddleLift);
                 L2.setTargetPosition(MiddleLift);
+                FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-            else if(gamepad1.dpad_down && L1.getCurrentPosition() <= BottomLift){
+            else if(gamepad1.dpad_down && L1.getCurrentPosition() != BottomLift){
+                SetPos = true;
                 L1.setTargetPosition(BottomLift);
                 L2.setTargetPosition(BottomLift);
+                FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+            else if(gamepad1.dpad_right && L1.getCurrentPosition() != ConeLift){
+                SetPos = true;
+                L1.setTargetPosition(ConeLift);
+                L2.setTargetPosition(ConeLift);
+                FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+            if (SetPos){
+                L1.setPower(Lspeed);
+                L1.setPower(Lspeed);
             }
 
             //claw
