@@ -24,11 +24,10 @@ public class T1 extends LinearOpMode{
     //lift Vars
     private DcMotor L1 = null;
     private DcMotor L2 = null;
-    private DcMotor L3 = null;
     private double Lspeed = 1;
 
     //servo Vars
-//    private Servo MS = null;
+    private Servo LServo = null;
 
     @Override
     public void runOpMode() {
@@ -38,7 +37,7 @@ public class T1 extends LinearOpMode{
         BR = hardwareMap.get(DcMotor.class, "BR");
         L1 = hardwareMap.get(DcMotor.class, "lift1");
         L2 = hardwareMap.get(DcMotor.class, "lift2");
-        L3 = hardwareMap.get(DcMotor.class, "lift3");
+        LServo = hardwareMap.get(Servo.class, "LServo");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.FORWARD);
@@ -46,8 +45,7 @@ public class T1 extends LinearOpMode{
         BR.setDirection(DcMotor.Direction.FORWARD);
 
         L1.setDirection(DcMotor.Direction.REVERSE);
-        L2.setDirection(DcMotor.Direction.REVERSE);
-        L3.setDirection(DcMotor.Direction.FORWARD);
+        L2.setDirection(DcMotor.Direction.FORWARD);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -82,28 +80,25 @@ public class T1 extends LinearOpMode{
             if (gamepad1.right_bumper){
                 L1.setPower(Lspeed);
                 L2.setPower(Lspeed);
-                L3.setPower(Lspeed);
                 telemetry.addData("Status", "Going up");
             }
             else if (gamepad1.left_bumper){
                 L1.setPower(-Lspeed);
                 L2.setPower(-Lspeed);
-                L3.setPower(-Lspeed);
                 telemetry.addData("Status", "Going down");
             }
             else{
                 L1.setPower(0);
                 L2.setPower(0);
-                L3.setPower(0);
             }
 
             //claw
-//            if (gamepad1.a){
-//                MS.setPosition(0);
-//            }
-//            if (gamepad1.b){
-//                MS.setPosition(1);
-//            }
+            if (gamepad1.a){
+                LServo.setPosition(0);
+            }
+            if (gamepad1.b){
+                LServo.setPosition(1);
+            }
 
             FL.setPower(FLP);
             FR.setPower(FRP);
