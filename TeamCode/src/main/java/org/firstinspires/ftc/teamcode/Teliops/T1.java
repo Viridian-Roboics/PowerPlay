@@ -127,12 +127,14 @@ public class T1 extends LinearOpMode{
             telemetry.update();
         }
     }
+
     private int MoveLift(int GoalPos){
         FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         L1.setTargetPosition(GoalPos);
         return GoalPos;
     }
+
     private void RegMoveLift(int down, String status){
         LTarget = 0;
         L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
