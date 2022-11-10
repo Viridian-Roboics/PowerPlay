@@ -51,7 +51,15 @@ public class A1 extends LinearOpMode{
     static final double P_DRIVE_GAIN = 0.03;
 
     //servo Vars
-    private Servo MS = null;
+    private Servo LServo = null;
+
+    //lift Vars
+    private DcMotor L1 = null;
+    private DcMotor L2 = null;
+    private int BottomLift = 100;
+    private int MiddleLift = 200;
+    private int TopLift = 300;
+    private int ConeLift = 50;
 
     @Override
     public void runOpMode() {
@@ -59,11 +67,17 @@ public class A1 extends LinearOpMode{
         FR = hardwareMap.get(DcMotor.class, "FR");
         BL = hardwareMap.get(DcMotor.class, "BL");
         BR = hardwareMap.get(DcMotor.class, "BR");
+        L1 = hardwareMap.get(DcMotor.class, "lift1");
+        L2 = hardwareMap.get(DcMotor.class, "lift2");
+        LServo = hardwareMap.get(Servo.class, "LServo");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.FORWARD);
         BL.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.FORWARD);
+
+        L1.setDirection(DcMotor.Direction.REVERSE);
+        L2.setDirection(DcMotor.Direction.FORWARD);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -80,6 +94,9 @@ public class A1 extends LinearOpMode{
         FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         telemetry.addData("Status", "Ready to rock and roll");
         telemetry.update();
@@ -204,5 +221,21 @@ public class A1 extends LinearOpMode{
     public void resetHeading() {
         headingOffset = getRawHeading();
         robotHeading = 0;
+    }
+
+    public void LiftPosSet(int LiftTo){
+        if (LiftTo > L1.getCurrentPosition()) {
+            L1.setTargetPosition(LiftTo);
+            L2.setTargetPosition(LiftTo);
+            L1.setPower(1);
+            L2.setPower(1);
+        }
+        if (L1.isBusy()){
+
+        }
+        else{
+            L1.setPower(0);
+            L2.setPower(0);
+        }
     }
 }
