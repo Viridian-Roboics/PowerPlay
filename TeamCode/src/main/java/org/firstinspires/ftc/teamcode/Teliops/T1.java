@@ -25,9 +25,11 @@ public class T1 extends LinearOpMode{
     private DcMotor L1 = null;
     private DcMotor L2 = null;
     private double Lspeed = 1;
-    private double LPos = 0;
     private double LMin = 0;
     private double LMax = 0;
+    private int BottomLift = 100;
+    private int MiddleLift = 200;
+    private int TopLift = 300;
 
     //servo Vars
     private Servo LServo = null;
@@ -98,11 +100,24 @@ public class T1 extends LinearOpMode{
                 L2.setPower(0);
             }
 
+            if(gamepad1.dpad_up && L1.getCurrentPosition() <= TopLift){
+                L1.setTargetPosition(TopLift);
+                L2.setTargetPosition(TopLift);
+            }
+            else if(gamepad1.dpad_left && L1.getCurrentPosition() <= MiddleLift){
+                L1.setTargetPosition(MiddleLift);
+                L2.setTargetPosition(MiddleLift);
+            }
+            else if(gamepad1.dpad_down && L1.getCurrentPosition() <= BottomLift){
+                L1.setTargetPosition(BottomLift);
+                L2.setTargetPosition(BottomLift);
+            }
+
             //claw
             if (gamepad1.a){
                 LServo.setPosition(0);
             }
-            if (gamepad1.b){
+            else if (gamepad1.b){
                 LServo.setPosition(1);
             }
 
@@ -114,7 +129,7 @@ public class T1 extends LinearOpMode{
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", FLP, FRP);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", BLP, BRP);
-            telemetry.addData("Lift Pos", "%4.2f", LPos);
+            telemetry.addData("Lift Pos", "%4.2f", L1.getCurrentPosition());
             telemetry.update();
         }
     }
