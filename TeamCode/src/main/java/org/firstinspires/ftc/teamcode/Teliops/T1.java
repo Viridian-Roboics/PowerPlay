@@ -129,8 +129,7 @@ public class T1 extends LinearOpMode{
     }
 
     private int MoveLift(int GoalPos){
-        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        L1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         L1.setTargetPosition(GoalPos);
         return GoalPos;
     }
