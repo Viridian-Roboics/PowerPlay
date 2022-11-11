@@ -80,9 +80,9 @@ public class T1 extends LinearOpMode{
 
             if (max > CAP) {
                 FLP = FLP / max * CAP;
-                FRP = FLP / max * CAP;
-                BLP = max;
-                BRP = max;
+                FRP = FRP / max * CAP;
+                BLP = BLP / max * CAP;
+                BRP = BRP / max * CAP;
             }
 
             //lift
@@ -123,7 +123,7 @@ public class T1 extends LinearOpMode{
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", FLP, FRP);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", BLP, BRP);
-            telemetry.addData("Lift Pos", "%4.2f", L1.getCurrentPosition());
+            telemetry.addData("Lift Pos", L1.getCurrentPosition());
             telemetry.update();
         }
     }
