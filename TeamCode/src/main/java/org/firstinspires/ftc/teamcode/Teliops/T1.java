@@ -21,11 +21,15 @@ public class T1 extends LinearOpMode{
     private DcMotor FR = null;
     private DcMotor BL = null;
     private DcMotor BR = null;
-    private static double CAP = .5;
+    private double CAP = .5;
+    private double axial = 0;
+    private double lateral = 0;
+    private double yaw = 0;
 
     //lift Vars
     private DcMotor L1 = null;
-    private double Lspeed = 1;
+    private double ULspeed = 1;
+    private double DLspeed = .5;
     private double LMin = 0;
     private double LMax = 0;
     private int LTarget = 0;
@@ -33,10 +37,12 @@ public class T1 extends LinearOpMode{
     private int MiddleLift = 200;
     private int TopLift = 300;
     private int ConeLift = 50;
-    private boolean SetPos = false;
 
     //servo Vars
     private Servo LServo = null;
+
+    //other vars
+    private boolean control = true;
 
     @Override
     public void runOpMode() {
@@ -56,6 +62,9 @@ public class T1 extends LinearOpMode{
 
         L1.setDirection(DcMotor.Direction.REVERSE);
 
+        LMin = L1.getCurrentPosition();
+        LMax = LMin + 3884;
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -65,9 +74,25 @@ public class T1 extends LinearOpMode{
         while (opModeIsActive()) {
             double max;
 
-            double axial = -gamepad1.left_stick_y;
-            double lateral = gamepad1.left_stick_x;
-            double yaw = gamepad1.right_stick_x;
+            if (gamepad1.x || gamepad2.x){
+                if (control){
+                    control = false;
+                }
+                else{
+                    control = true;
+                }
+            }
+
+            if (control){
+                axial = -gamepad2.left_stick_y;
+                lateral = gamepad2.left_stick_x;
+                yaw = gamepad2.right_stick_x;
+            }
+            else{
+                axial = -gamepad1.left_stick_y;
+                lateral = gamepad1.left_stick_x;
+                yaw = gamepad1.right_stick_x;
+            }
 
             double FLP = axial + lateral + yaw;
             double FRP = axial - lateral - yaw;
@@ -78,6 +103,13 @@ public class T1 extends LinearOpMode{
             max = Math.max(max, Math.abs(BLP));
             max = Math.max(max, Math.abs(BLP));
 
+            if (gamepad1.right_trigger > .01 || gamepad2.right_trigger > .01){
+                CAP = .25;
+            }
+            else{
+                CAP = .5;
+            }
+
             if (max > CAP) {
                 FLP = FLP / max * CAP;
                 FRP = FRP / max * CAP;
@@ -86,12 +118,12 @@ public class T1 extends LinearOpMode{
             }
 
             //lift
-            if (gamepad1.right_bumper) {
-                RegMoveLift(1, "Going Up");
-            } else if (gamepad1.left_bumper) {
-                RegMoveLift(-1, "Going Down");
+            if (gamepad1.right_bumper && L1.getCurrentPosition() < LMax) {
+                RegMoveLift(1, "Going Up", ULspeed);
+            } else if (gamepad1.left_bumper && L1.getCurrentPosition() > LMin){
+                RegMoveLift(-1, "Going Down", DLspeed);
             } else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
-                L1.setPower(0);
+                L1.setPower(0.0005);
             }
 
             if (gamepad1.dpad_up && L1.getCurrentPosition() != TopLift) {
@@ -104,7 +136,7 @@ public class T1 extends LinearOpMode{
                 LTarget = MoveLift(ConeLift);
             }
             if (LTarget != 0) {
-                L1.setPower(Lspeed);
+                L1.setPower(ULspeed);
             }
 
             //claw
@@ -112,7 +144,7 @@ public class T1 extends LinearOpMode{
                 LServo.setPosition(0);
             }
             else if (gamepad1.b){
-                LServo.setPosition(1);
+                LServo.setPosition(.1);
             }
 
             FL.setPower(FLP);
@@ -134,10 +166,10 @@ public class T1 extends LinearOpMode{
         return GoalPos;
     }
 
-    private void RegMoveLift(int down, String status){
+    private void RegMoveLift(int down, String status, double speed){
         LTarget = 0;
         L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        L1.setPower(Lspeed * down);
+        L1.setPower(speed * down);
         telemetry.addData("Status", status);
     }
 }
