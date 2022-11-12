@@ -15,14 +15,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 // lift1     lift2
-@Autonomous(name="Auton 1")
-public class A1 extends LinearOpMode{
+@Autonomous(name="LeftAuton")
+public class LeftAuton extends LinearOpMode{
     //motors
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor FL = null;
     private DcMotor FR = null;
     private DcMotor BL = null;
     private DcMotor BR = null;
+    double Speed = .5;
+    double TSpeed = .5;
 
     //encoders
     static final double COUNTS_PER_MOTOR_REV = 1440 ;
@@ -55,11 +57,13 @@ public class A1 extends LinearOpMode{
 
     //lift Vars
     private DcMotor L1 = null;
-    private DcMotor L2 = null;
-    private int BottomLift = 100;
-    private int MiddleLift = 200;
-    private int TopLift = 300;
-    private int ConeLift = 50;
+    private int LMin = 0;
+    private int LMax = 0;
+    private int BottomLift = 0;
+    private int MiddleLift = 0;
+    private int TopLift = 0;
+    private int ConeLift = 0;
+
 
     @Override
     public void runOpMode() {
@@ -68,7 +72,6 @@ public class A1 extends LinearOpMode{
         BL = hardwareMap.get(DcMotor.class, "BL");
         BR = hardwareMap.get(DcMotor.class, "BR");
         L1 = hardwareMap.get(DcMotor.class, "lift1");
-        L2 = hardwareMap.get(DcMotor.class, "lift2");
         LServo = hardwareMap.get(Servo.class, "LServo");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
@@ -77,7 +80,6 @@ public class A1 extends LinearOpMode{
         BR.setDirection(DcMotor.Direction.FORWARD);
 
         L1.setDirection(DcMotor.Direction.REVERSE);
-        L2.setDirection(DcMotor.Direction.FORWARD);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -95,8 +97,15 @@ public class A1 extends LinearOpMode{
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        L1.setTargetPosition(LMin);
+        L1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        LMin = L1.getCurrentPosition();
+        LMax = LMin + 3884;
+        BottomLift = LMin + 1557;
+        MiddleLift = LMin + 2953;
+        TopLift = LMin + 3577;
+        ConeLift = LMin + 626;
 
         telemetry.addData("Status", "Ready to rock and roll");
         telemetry.update();
@@ -105,7 +114,25 @@ public class A1 extends LinearOpMode{
         runtime.reset();
 
         //movement code
-        encoderDrive(1, 1, false, 10000);
+        LServo.setPosition(.15);
+        encoderDrive(Speed, 12, true, 10000);
+        encoderDrive(Speed, 24, false, 10000);
+        encoderDrive(Speed, -12, true, 10000);
+
+        //cone cycle
+        LiftPosSet(TopLift);
+        LServo.setPosition(0);
+        LiftPosSet(BottomLift);
+        turnToHeading(TSpeed, -90);
+        encoderDrive(Speed, 12, false, 10000);
+        LiftPosSet(ConeLift);
+        LServo.setPosition(.15);
+        turnToHeading(TSpeed, 90);
+        encoderDrive(Speed, 12, true, 10000);
+
+        encoderDrive(Speed, 6, true, 10000);
+        encoderDrive(Speed, -12, false, 10000);
+
 
     }
 
@@ -224,18 +251,19 @@ public class A1 extends LinearOpMode{
     }
 
     public void LiftPosSet(int LiftTo){
-        if (LiftTo > L1.getCurrentPosition()) {
+        if (LiftTo >= L1.getCurrentPosition()) {
             L1.setTargetPosition(LiftTo);
-            L2.setTargetPosition(LiftTo);
             L1.setPower(1);
-            L2.setPower(1);
+        }
+        else if (LiftTo < L1.getCurrentPosition()){
+            L1.setTargetPosition(LiftTo);
+            L1.setPower(.5);
         }
         if (L1.isBusy()){
 
         }
         else{
             L1.setPower(0);
-            L2.setPower(0);
         }
     }
 }
