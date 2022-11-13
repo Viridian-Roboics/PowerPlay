@@ -141,7 +141,7 @@ public class T1 extends LinearOpMode{
                 LServo.setPosition(0);
             }
             else if (gamepad1.b || gamepad2.b){
-                LServo.setPosition(1);
+                LServo.setPosition(.9);
             }
 
             FL.setPower(FLP);
@@ -153,7 +153,6 @@ public class T1 extends LinearOpMode{
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", FLP, FRP);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", BLP, BRP);
             telemetry.addData("Lift Pos", L1.getCurrentPosition());
-            telemetry.addData("Trigger Pos", gamepad1.left_trigger);
             telemetry.update();
         }
     }
