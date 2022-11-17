@@ -137,8 +137,6 @@ public class RightAuton extends LinearOpMode{
 
         encoderDrive(Speed, -6, true, 10000);
         encoderDrive(Speed, -12, false, 10000);
-
-
     }
 
     public void encoderDrive(double speed, double MoveIN, boolean strafe, double timeoutS) {
