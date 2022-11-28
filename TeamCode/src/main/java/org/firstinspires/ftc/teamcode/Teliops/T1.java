@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Set;
 
+// input buttons leftover: x
 // lift1     lift2
 @TeleOp(name="Teliop One")
 public class T1 extends LinearOpMode{
@@ -37,6 +38,7 @@ public class T1 extends LinearOpMode{
     private int MiddleLift = 0;
     private int TopLift = 0;
     private int ConeLift = 0;
+    private boolean IgnoreLift = false;
 
     //servo Vars
     private Servo LServo = null;
@@ -110,9 +112,9 @@ public class T1 extends LinearOpMode{
             }
 
             //lift
-            if (gamepad1.right_bumper || gamepad2.right_bumper) {
+            if ((gamepad1.right_bumper || gamepad2.right_bumper) && (L1.getCurrentPosition() <= LMax || IgnoreLift)) {
                 RegMoveLift(1, "Going Up", ULspeed);
-            } else if(gamepad1.left_bumper || gamepad2.left_bumper) {
+            } else if((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin || IgnoreLift)) {
                 RegMoveLift(-1, "Going Down", DLspeed);
             } else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
                 L1.setPower(0.0005);
@@ -139,9 +141,15 @@ public class T1 extends LinearOpMode{
             //claw
             if (gamepad1.a || gamepad2.a){
                 LServo.setPosition(0);
-            }
-            else if (gamepad1.b || gamepad2.b){
+            } else if (gamepad1.b || gamepad2.b){
                 LServo.setPosition(.9);
+            }
+
+            //fuck lift restrictions
+            if ((gamepad1.y || gamepad2.y) && IgnoreLift == false){
+                IgnoreLift = true;
+            } else if ((gamepad1.y || gamepad2.y) && IgnoreLift == true){
+                IgnoreLift = false;
             }
 
             FL.setPower(FLP);
