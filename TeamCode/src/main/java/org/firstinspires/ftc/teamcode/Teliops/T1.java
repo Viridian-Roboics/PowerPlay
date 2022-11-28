@@ -55,6 +55,12 @@ public class T1 extends LinearOpMode{
         L1 = hardwareMap.get(DcMotor.class, "lift1");
         LServo = hardwareMap.get(Servo.class, "LServo");
 
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        L1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         FL.setDirection(DcMotor.Direction.REVERSE);
