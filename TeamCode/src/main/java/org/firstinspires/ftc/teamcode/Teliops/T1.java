@@ -148,7 +148,7 @@ public class T1 extends LinearOpMode{
             if (gamepad1.a || gamepad2.a){
                 LServo.setPosition(0);
             } else if (gamepad1.b || gamepad2.b){
-                LServo.setPosition(.9);
+                LServo.setPosition(.2);
             }
 
             //fuck lift restrictions
