@@ -42,9 +42,13 @@ public class T1 extends LinearOpMode{
 
     //servo Vars
     private Servo LServo = null;
-
-    //other vars
-    private boolean control = true;
+    private Servo PickServo = null;
+    private boolean Pickopen = false;
+    private boolean Lopen = false;
+    private double TopPick = 0;
+    private double BottomPick = .2;
+    private double TopL = 0;
+    private double BottomL = 1;
 
     @Override
     public void runOpMode() {
@@ -145,10 +149,21 @@ public class T1 extends LinearOpMode{
             }
 
             //claw
-            if (gamepad1.a || gamepad2.a){
-                LServo.setPosition(0);
-            } else if (gamepad1.b || gamepad2.b){
-                LServo.setPosition(.2);
+            if ((gamepad1.a || gamepad2.a) && Lopen){
+                Lopen = false;
+                LServo.setPosition(TopL);
+            } else if ((gamepad1.a || gamepad2.a) && !Lopen){
+                Lopen = true;
+                LServo.setPosition(BottomL);
+            }
+
+            //pick lower
+            if ((gamepad1.b || gamepad2.b) && Pickopen){
+                Pickopen = false;
+                PickServo.setPosition(TopPick);
+            } else if ((gamepad1.b || gamepad2.b) && !Pickopen){
+                Pickopen = true;
+                PickServo.setPosition(BottomPick);
             }
 
             //fuck lift restrictions
