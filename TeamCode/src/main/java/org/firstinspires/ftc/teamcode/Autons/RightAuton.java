@@ -117,26 +117,29 @@ public class RightAuton extends LinearOpMode{
         waitForStart();
         runtime.reset();
 
+        encoderDrive(Speed, 6, true, 10000);
+        encoderDrive(Speed, 6, false, 10000);
+
         //movement code
-        encoderDrive(Speed, -12, true, 10000);
-        sleep(1000);
-        encoderDrive(Speed, 24, false, 10000);
-        sleep(10000);
-        encoderDrive(Speed, 12, true, 10000);
+//        encoderDrive(Speed, -12, true, 10000);
+//        sleep(1000);
+//        encoderDrive(Speed, 24, false, 10000);
+//        sleep(10000);
+//        encoderDrive(Speed, 12, true, 10000);
 
         //cone cycle
-        LiftPosSet(TopLift);
-        LServo.setPosition(0);
-        LiftPosSet(BottomLift);
-        turnToHeading(TSpeed, 90);
-        encoderDrive(Speed, 12, false, 10000);
-        LiftPosSet(ConeLift);
-        LServo.setPosition(.15);
-        turnToHeading(TSpeed, -90);
-        encoderDrive(Speed, -12, true, 10000);
-
-        encoderDrive(Speed, -6, true, 10000);
-        encoderDrive(Speed, -12, false, 10000);
+//        LiftPosSet(TopLift);
+//        LServo.setPosition(0);
+//        LiftPosSet(BottomLift);
+//        turnToHeading(TSpeed, 90);
+//        encoderDrive(Speed, 12, false, 10000);
+//        LiftPosSet(ConeLift);
+//        LServo.setPosition(.15);
+//        turnToHeading(TSpeed, -90);
+//        encoderDrive(Speed, -12, true, 10000);
+//
+//        encoderDrive(Speed, -6, true, 10000);
+//        encoderDrive(Speed, -12, false, 10000);
     }
 
     public void encoderDrive(double speed, double MoveIN, boolean strafe, double timeoutS) {

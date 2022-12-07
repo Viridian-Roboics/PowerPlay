@@ -30,7 +30,7 @@ public class T1 extends LinearOpMode{
     //lift Vars
     private DcMotor L1 = null;
     private double ULspeed = 1;
-    private double DLspeed = 1;
+    private double DLspeed = .5;
     private int LMin = 0;
     private int LMax = 0;
     private int LTarget = 0;
@@ -46,7 +46,7 @@ public class T1 extends LinearOpMode{
     private boolean Pickopen = false;
     private boolean Lopen = false;
     private double TopPick = 0;
-    private double BottomPick = .2;
+    private double BottomPick = 1;
     private double TopL = 0;
     private double BottomL = 1;
 
@@ -58,6 +58,7 @@ public class T1 extends LinearOpMode{
         BR = hardwareMap.get(DcMotor.class, "BR");
         L1 = hardwareMap.get(DcMotor.class, "lift1");
         LServo = hardwareMap.get(Servo.class, "LServo");
+        PickServo = hardwareMap.get(Servo.class, "PickServo");
 
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -150,9 +151,11 @@ public class T1 extends LinearOpMode{
 
             //claw
             if ((gamepad1.a || gamepad2.a) && Lopen){
+                sleep(500);
                 Lopen = false;
                 LServo.setPosition(TopL);
             } else if ((gamepad1.a || gamepad2.a) && !Lopen){
+                sleep(500);
                 Lopen = true;
                 LServo.setPosition(BottomL);
             }
