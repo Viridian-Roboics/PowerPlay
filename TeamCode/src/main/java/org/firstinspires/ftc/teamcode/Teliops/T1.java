@@ -76,7 +76,7 @@ public class T1 extends LinearOpMode{
         L1.setDirection(DcMotor.Direction.REVERSE);
 
         LMin = L1.getCurrentPosition();
-        LMax = LMin + 3884;
+        LMax = LMin + 5000;
         BottomLift = LMin + 1557;
         MiddleLift = LMin + 2953;
         TopLift = LMin + 3577;
@@ -128,7 +128,7 @@ public class T1 extends LinearOpMode{
             } else if((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin || IgnoreLift)) {
                 RegMoveLift(-1, "Going Down", DLspeed);
             } else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
-                L1.setPower(0.0005);
+                L1.setPower(0);
             }
 
             if ((gamepad1.dpad_up || gamepad2.dpad_up) && L1.getCurrentPosition() != TopLift) {
@@ -162,9 +162,11 @@ public class T1 extends LinearOpMode{
 
             //pick lower
             if ((gamepad1.b || gamepad2.b) && Pickopen){
+                sleep(500);
                 Pickopen = false;
                 PickServo.setPosition(TopPick);
             } else if ((gamepad1.b || gamepad2.b) && !Pickopen){
+                sleep(500);
                 Pickopen = true;
                 PickServo.setPosition(BottomPick);
             }
