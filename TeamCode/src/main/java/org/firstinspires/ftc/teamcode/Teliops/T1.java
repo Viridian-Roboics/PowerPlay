@@ -49,6 +49,8 @@ public class T1 extends LinearOpMode{
     private double BottomPick = 1;
     private double TopL = 0;
     private double BottomL = 1;
+    private int ClawBlock = 0;
+    private int PickBlock = 0;
 
     @Override
     public void runOpMode() {
@@ -76,7 +78,7 @@ public class T1 extends LinearOpMode{
         L1.setDirection(DcMotor.Direction.REVERSE);
 
         LMin = L1.getCurrentPosition();
-        LMax = LMin + 5000;
+        LMax = LMin + 4000;
         BottomLift = LMin + 1557;
         MiddleLift = LMin + 2953;
         TopLift = LMin + 3577;
@@ -128,7 +130,7 @@ public class T1 extends LinearOpMode{
             } else if((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin || IgnoreLift)) {
                 RegMoveLift(-1, "Going Down", DLspeed);
             } else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
-                L1.setPower(0);
+                L1.setPower(0.0005);
             }
 
             if ((gamepad1.dpad_up || gamepad2.dpad_up) && L1.getCurrentPosition() != TopLift) {
@@ -150,25 +152,41 @@ public class T1 extends LinearOpMode{
             }
 
             //claw
-            if ((gamepad1.a || gamepad2.a) && Lopen){
-                sleep(500);
-                Lopen = false;
-                LServo.setPosition(TopL);
-            } else if ((gamepad1.a || gamepad2.a) && !Lopen){
-                sleep(500);
-                Lopen = true;
-                LServo.setPosition(BottomL);
+            if (ClawBlock == 0) {
+                if ((gamepad1.a || gamepad2.a) && Lopen) {
+                    sleep(500);
+                    telemetry.addData("button A1", FLP);
+                    Lopen = false;
+                    LServo.setPosition(TopL);
+                } else if ((gamepad1.a || gamepad2.a) && !Lopen) {
+                    sleep(500);
+                    telemetry.addData("button A2", FLP);
+                    Lopen = true;
+                    LServo.setPosition(BottomL);
+                }
+            } else if(ClawBlock >= 20000){
+                ClawBlock = 0;
+            } else{
+                ClawBlock += 1;
             }
 
             //pick lower
-            if ((gamepad1.b || gamepad2.b) && Pickopen){
-                sleep(500);
-                Pickopen = false;
-                PickServo.setPosition(TopPick);
-            } else if ((gamepad1.b || gamepad2.b) && !Pickopen){
-                sleep(500);
-                Pickopen = true;
-                PickServo.setPosition(BottomPick);
+            if (PickBlock == 0) {
+                if ((gamepad1.b || gamepad2.b) && Pickopen) {
+                    sleep(500);
+                    telemetry.addData("button B1", FLP);
+                    Pickopen = false;
+                    PickServo.setPosition(TopPick);
+                } else if ((gamepad1.b || gamepad2.b) && !Pickopen) {
+                    sleep(500);
+                    telemetry.addData("button B2", FLP);
+                    Pickopen = true;
+                    PickServo.setPosition(BottomPick);
+                }
+            } else if(PickBlock >= 20000){
+                PickBlock = 0;
+            } else{
+                PickBlock += 1;
             }
 
             //fuck lift restrictions
@@ -182,11 +200,18 @@ public class T1 extends LinearOpMode{
             FR.setPower(FRP);
             BL.setPower(BLP);
             BR.setPower(BRP);
+            if (gamepad1.a){
+                telemetry.addData("Button A Check", FLP);
+            }
+            if (gamepad1.b){
+                telemetry.addData("Button B Check", FLP);
+            }
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", FLP, FRP);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", BLP, BRP);
             telemetry.addData("Lift Pos", L1.getCurrentPosition());
+            telemetry.addData("ClawBlock: " + ClawBlock, "PickBlock: " + PickBlock);
             telemetry.update();
         }
     }

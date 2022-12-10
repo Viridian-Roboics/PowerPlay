@@ -27,9 +27,9 @@ public class RightAuton extends LinearOpMode{
     double TSpeed = .5;
 
     //encoders
-    static final double COUNTS_PER_MOTOR_REV = 1440 ;
-    static final double DRIVE_GEAR_REDUCTION = 1.0 ;
-    static final double WHEEL_DIAMETER_INCHES = 4.0 ;
+    static final double COUNTS_PER_MOTOR_REV = 1440;
+    static final double DRIVE_GEAR_REDUCTION = 1.0;
+    static final double WHEEL_DIAMETER_INCHES = 4.0;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
 
@@ -120,26 +120,6 @@ public class RightAuton extends LinearOpMode{
         encoderDrive(Speed, 6, true, 10000);
         encoderDrive(Speed, 6, false, 10000);
 
-        //movement code
-//        encoderDrive(Speed, -12, true, 10000);
-//        sleep(1000);
-//        encoderDrive(Speed, 24, false, 10000);
-//        sleep(10000);
-//        encoderDrive(Speed, 12, true, 10000);
-
-        //cone cycle
-//        LiftPosSet(TopLift);
-//        LServo.setPosition(0);
-//        LiftPosSet(BottomLift);
-//        turnToHeading(TSpeed, 90);
-//        encoderDrive(Speed, 12, false, 10000);
-//        LiftPosSet(ConeLift);
-//        LServo.setPosition(.15);
-//        turnToHeading(TSpeed, -90);
-//        encoderDrive(Speed, -12, true, 10000);
-//
-//        encoderDrive(Speed, -6, true, 10000);
-//        encoderDrive(Speed, -12, false, 10000);
     }
 
     public void encoderDrive(double speed, double MoveIN, boolean strafe, double timeoutS) {
@@ -269,7 +249,7 @@ public class RightAuton extends LinearOpMode{
 
         }
         else{
-            L1.setPower(0);
+            L1.setPower(0.0005);
         }
     }
 }
