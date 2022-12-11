@@ -101,7 +101,7 @@ public class RightAuton extends LinearOpMode{
         L1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         LMin = L1.getCurrentPosition();
-        LMax = LMin + 3884;
+        LMax = LMin + 10000;
         BottomLift = LMin + 1557;
         MiddleLift = LMin + 2953;
         TopLift = LMin + 3577;
@@ -117,9 +117,8 @@ public class RightAuton extends LinearOpMode{
         waitForStart();
         runtime.reset();
 
-        encoderDrive(Speed, 6, true, 10000);
-        encoderDrive(Speed, 6, false, 10000);
-
+        //Dive Code
+        encoderDrive(Speed, 8, false, 10000);
     }
 
     public void encoderDrive(double speed, double MoveIN, boolean strafe, double timeoutS) {

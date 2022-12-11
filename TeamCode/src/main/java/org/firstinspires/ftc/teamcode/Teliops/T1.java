@@ -45,10 +45,12 @@ public class T1 extends LinearOpMode{
     private Servo PickServo = null;
     private boolean Pickopen = false;
     private boolean Lopen = false;
+        //picker drop
     private double TopPick = 0;
     private double BottomPick = 1;
+        //main grabber
     private double TopL = 0;
-    private double BottomL = 1;
+    private double BottomL = .9;
     private int ClawBlock = 0;
     private int PickBlock = 0;
 
@@ -78,11 +80,11 @@ public class T1 extends LinearOpMode{
         L1.setDirection(DcMotor.Direction.REVERSE);
 
         LMin = L1.getCurrentPosition();
-        LMax = LMin + 4000;
-        BottomLift = LMin + 1557;
-        MiddleLift = LMin + 2953;
-        TopLift = LMin + 3577;
-        ConeLift = LMin + 626;
+        LMax = LMin + 2762;
+        BottomLift = LMin + 1490;
+        MiddleLift = LMin + 2279;
+        TopLift = LMin + 2762;
+        ConeLift = LMin + 1000;
 
 
         telemetry.addData("Status", "Initialized");
@@ -105,7 +107,7 @@ public class T1 extends LinearOpMode{
 
             max = Math.max(Math.abs(FLP), Math.abs(FRP));
             max = Math.max(max, Math.abs(BLP));
-            max = Math.max(max, Math.abs(BLP));
+            max = Math.max(max, Math.abs(BRP));
 
             if (gamepad1.right_trigger > .25 || gamepad2.right_trigger > .25){
                 CAP = .25;
@@ -135,6 +137,7 @@ public class T1 extends LinearOpMode{
 
             if ((gamepad1.dpad_up || gamepad2.dpad_up) && L1.getCurrentPosition() != TopLift) {
                 LTarget = MoveLift(TopLift);
+                PickServo.setPosition(TopPick);
             } else if ((gamepad1.dpad_left  || gamepad2.dpad_left) && L1.getCurrentPosition() != MiddleLift) {
                 LTarget = MoveLift(MiddleLift);
             } else if ((gamepad1.dpad_down || gamepad2.dpad_down) && L1.getCurrentPosition() != BottomLift) {
@@ -155,12 +158,10 @@ public class T1 extends LinearOpMode{
             if (ClawBlock == 0) {
                 if ((gamepad1.a || gamepad2.a) && Lopen) {
                     sleep(500);
-                    telemetry.addData("button A1", FLP);
                     Lopen = false;
                     LServo.setPosition(TopL);
                 } else if ((gamepad1.a || gamepad2.a) && !Lopen) {
                     sleep(500);
-                    telemetry.addData("button A2", FLP);
                     Lopen = true;
                     LServo.setPosition(BottomL);
                 }
@@ -174,12 +175,10 @@ public class T1 extends LinearOpMode{
             if (PickBlock == 0) {
                 if ((gamepad1.b || gamepad2.b) && Pickopen) {
                     sleep(500);
-                    telemetry.addData("button B1", FLP);
                     Pickopen = false;
                     PickServo.setPosition(TopPick);
                 } else if ((gamepad1.b || gamepad2.b) && !Pickopen) {
                     sleep(500);
-                    telemetry.addData("button B2", FLP);
                     Pickopen = true;
                     PickServo.setPosition(BottomPick);
                 }
@@ -200,12 +199,6 @@ public class T1 extends LinearOpMode{
             FR.setPower(FRP);
             BL.setPower(BLP);
             BR.setPower(BRP);
-            if (gamepad1.a){
-                telemetry.addData("Button A Check", FLP);
-            }
-            if (gamepad1.b){
-                telemetry.addData("Button B Check", FLP);
-            }
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", FLP, FRP);
