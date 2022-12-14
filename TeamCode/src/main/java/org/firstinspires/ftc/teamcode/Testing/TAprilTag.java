@@ -47,6 +47,8 @@ public class TAprilTag extends LinearOpMode {
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
+        // add motor stuff here
+
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -99,12 +101,24 @@ public class TAprilTag extends LinearOpMode {
 
                     for (AprilTagDetection detection : detections) {
                         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-                        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x * FEET_PER_METER));
-                        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y * FEET_PER_METER));
-                        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z * FEET_PER_METER));
-                        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-                        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-                        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+
+                        int detectedId = detection.id;
+
+                        // ignore warnings, they'll disappear when you add motor movement
+                        switch (detectedId) {
+                            case 1: {
+                                // case 1
+                                break;
+                            }
+                            case 2: {
+                                // case 2
+                                break;
+                            }
+                            case 3: {
+                                // case 3
+                                break;
+                            }
+                        }
                     }
                 }
 
