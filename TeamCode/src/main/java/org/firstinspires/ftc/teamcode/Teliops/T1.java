@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Set;
 
+// input buttons leftover: x
 // lift1     lift2
 @TeleOp(name="Teliop One")
 public class T1 extends LinearOpMode{
@@ -29,7 +30,7 @@ public class T1 extends LinearOpMode{
     //lift Vars
     private DcMotor L1 = null;
     private double ULspeed = 1;
-    private double DLspeed = 1;
+    private double DLspeed = .5;
     private int LMin = 0;
     private int LMax = 0;
     private int LTarget = 0;
@@ -37,12 +38,21 @@ public class T1 extends LinearOpMode{
     private int MiddleLift = 0;
     private int TopLift = 0;
     private int ConeLift = 0;
+    private boolean IgnoreLift = false;
 
     //servo Vars
     private Servo LServo = null;
-
-    //other vars
-    private boolean control = true;
+    private Servo PickServo = null;
+    private boolean Pickopen = false;
+    private boolean Lopen = false;
+        //picker drop
+    private double TopPick = 0;
+    private double BottomPick = 1;
+        //main grabber
+    private double TopL = 0;
+    private double BottomL = .9;
+    private int ClawBlock = 0;
+    private int PickBlock = 0;
 
     @Override
     public void runOpMode() {
@@ -52,6 +62,13 @@ public class T1 extends LinearOpMode{
         BR = hardwareMap.get(DcMotor.class, "BR");
         L1 = hardwareMap.get(DcMotor.class, "lift1");
         LServo = hardwareMap.get(Servo.class, "LServo");
+        PickServo = hardwareMap.get(Servo.class, "PickServo");
+
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        L1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -63,11 +80,11 @@ public class T1 extends LinearOpMode{
         L1.setDirection(DcMotor.Direction.REVERSE);
 
         LMin = L1.getCurrentPosition();
-        LMax = LMin + 3884;
-        BottomLift = LMin + 1557;
-        MiddleLift = LMin + 2953;
-        TopLift = LMin + 3577;
-        ConeLift = LMin + 626;
+        LMax = LMin + 2762;
+        BottomLift = LMin + 1490;
+        MiddleLift = LMin + 2279;
+        TopLift = LMin + 2762;
+        ConeLift = LMin + 1000;
 
 
         telemetry.addData("Status", "Initialized");
@@ -90,7 +107,7 @@ public class T1 extends LinearOpMode{
 
             max = Math.max(Math.abs(FLP), Math.abs(FRP));
             max = Math.max(max, Math.abs(BLP));
-            max = Math.max(max, Math.abs(BLP));
+            max = Math.max(max, Math.abs(BRP));
 
             if (gamepad1.right_trigger > .25 || gamepad2.right_trigger > .25){
                 CAP = .25;
@@ -110,9 +127,9 @@ public class T1 extends LinearOpMode{
             }
 
             //lift
-            if (gamepad1.right_bumper || gamepad2.right_bumper) {
+            if ((gamepad1.right_bumper || gamepad2.right_bumper) && (L1.getCurrentPosition() <= LMax || IgnoreLift)) {
                 RegMoveLift(1, "Going Up", ULspeed);
-            } else if(gamepad1.left_bumper || gamepad2.left_bumper) {
+            } else if((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin || IgnoreLift)) {
                 RegMoveLift(-1, "Going Down", DLspeed);
             } else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
                 L1.setPower(0.0005);
@@ -120,6 +137,7 @@ public class T1 extends LinearOpMode{
 
             if ((gamepad1.dpad_up || gamepad2.dpad_up) && L1.getCurrentPosition() != TopLift) {
                 LTarget = MoveLift(TopLift);
+                PickServo.setPosition(TopPick);
             } else if ((gamepad1.dpad_left  || gamepad2.dpad_left) && L1.getCurrentPosition() != MiddleLift) {
                 LTarget = MoveLift(MiddleLift);
             } else if ((gamepad1.dpad_down || gamepad2.dpad_down) && L1.getCurrentPosition() != BottomLift) {
@@ -137,11 +155,44 @@ public class T1 extends LinearOpMode{
             }
 
             //claw
-            if (gamepad1.a || gamepad2.a){
-                LServo.setPosition(0);
+            if (ClawBlock == 0) {
+                if ((gamepad1.a || gamepad2.a) && Lopen) {
+                    sleep(500);
+                    Lopen = false;
+                    LServo.setPosition(TopL);
+                } else if ((gamepad1.a || gamepad2.a) && !Lopen) {
+                    sleep(500);
+                    Lopen = true;
+                    LServo.setPosition(BottomL);
+                }
+            } else if(ClawBlock >= 20000){
+                ClawBlock = 0;
+            } else{
+                ClawBlock += 1;
             }
-            else if (gamepad1.b || gamepad2.b){
-                LServo.setPosition(.9);
+
+            //pick lower
+            if (PickBlock == 0) {
+                if ((gamepad1.b || gamepad2.b) && Pickopen) {
+                    sleep(500);
+                    Pickopen = false;
+                    PickServo.setPosition(TopPick);
+                } else if ((gamepad1.b || gamepad2.b) && !Pickopen) {
+                    sleep(500);
+                    Pickopen = true;
+                    PickServo.setPosition(BottomPick);
+                }
+            } else if(PickBlock >= 20000){
+                PickBlock = 0;
+            } else{
+                PickBlock += 1;
+            }
+
+            //fuck lift restrictions
+            if ((gamepad1.y || gamepad2.y) && IgnoreLift == false){
+                IgnoreLift = true;
+            } else if ((gamepad1.y || gamepad2.y) && IgnoreLift == true){
+                IgnoreLift = false;
             }
 
             FL.setPower(FLP);
@@ -153,6 +204,7 @@ public class T1 extends LinearOpMode{
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", FLP, FRP);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", BLP, BRP);
             telemetry.addData("Lift Pos", L1.getCurrentPosition());
+            telemetry.addData("ClawBlock: " + ClawBlock, "PickBlock: " + PickBlock);
             telemetry.update();
         }
     }

@@ -27,9 +27,9 @@ public class RightAuton extends LinearOpMode{
     double TSpeed = .5;
 
     //encoders
-    static final double COUNTS_PER_MOTOR_REV = 1440 ;
-    static final double DRIVE_GEAR_REDUCTION = 1.0 ;
-    static final double WHEEL_DIAMETER_INCHES = 4.0 ;
+    static final double COUNTS_PER_MOTOR_REV = 1440;
+    static final double DRIVE_GEAR_REDUCTION = 1.0;
+    static final double WHEEL_DIAMETER_INCHES = 4.0;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
 
@@ -101,7 +101,7 @@ public class RightAuton extends LinearOpMode{
         L1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         LMin = L1.getCurrentPosition();
-        LMax = LMin + 3884;
+        LMax = LMin + 10000;
         BottomLift = LMin + 1557;
         MiddleLift = LMin + 2953;
         TopLift = LMin + 3577;
@@ -117,28 +117,8 @@ public class RightAuton extends LinearOpMode{
         waitForStart();
         runtime.reset();
 
-        //movement code
-        encoderDrive(Speed, -12, true, 10000);
-        sleep(1000);
-        encoderDrive(Speed, 24, false, 10000);
-        sleep(10000);
-        encoderDrive(Speed, 12, true, 10000);
-
-        //cone cycle
-        LiftPosSet(TopLift);
-        LServo.setPosition(0);
-        LiftPosSet(BottomLift);
-        turnToHeading(TSpeed, 90);
-        encoderDrive(Speed, 12, false, 10000);
-        LiftPosSet(ConeLift);
-        LServo.setPosition(.15);
-        turnToHeading(TSpeed, -90);
-        encoderDrive(Speed, -12, true, 10000);
-
-        encoderDrive(Speed, -6, true, 10000);
-        encoderDrive(Speed, -12, false, 10000);
-
-
+        //Dive Code
+        encoderDrive(Speed, 8, false, 10000);
     }
 
     public void encoderDrive(double speed, double MoveIN, boolean strafe, double timeoutS) {
@@ -268,7 +248,7 @@ public class RightAuton extends LinearOpMode{
 
         }
         else{
-            L1.setPower(0);
+            L1.setPower(0.0005);
         }
     }
 }

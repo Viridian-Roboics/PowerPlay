@@ -12,20 +12,29 @@ public class TServo extends LinearOpMode{
     private ElapsedTime runtime = new ElapsedTime();
 
     //servo Vars
-    private Servo MS = null;
+    private Servo LServo = null;
+    private Servo PickServo = null;
 
     @Override
     public void runOpMode() {
+        LServo = hardwareMap.get(Servo.class, "LServo");
+        PickServo = hardwareMap.get(Servo.class, "PickServo");
 
         waitForStart();
         runtime.reset();
 
         while (opModeIsActive()) {
             if (gamepad1.a){
-                MS.setPosition(0);
+                LServo.setPosition(0);
             }
             if (gamepad1.b){
-                MS.setPosition(1);
+                LServo.setPosition(1);
+            }
+            if (gamepad1.y){
+                PickServo.setPosition(0);
+            }
+            if (gamepad1.x){
+                PickServo.setPosition(1);
             }
         }
     }
