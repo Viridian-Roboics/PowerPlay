@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -58,6 +59,7 @@ public class Hardware
     public DcMotor  m1  = null;
     public DcMotor  m2   = null;
     public DcMotor  m3  = null;
+    public NormalizedColorSensor colorSensor = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -78,6 +80,7 @@ public class Hardware
         m1 = hwMap.get(DcMotor.class, "right_drive");
         m2  = hwMap.get(DcMotor.class, "left_drive");
         m3 = hwMap.get(DcMotor.class, "right_drive");
+        colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
 
         //left motors
         m0.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
