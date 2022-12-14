@@ -15,7 +15,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera2;
 import java.util.ArrayList;
 
 
-@TeleOp(name = "TAprilTag", group = "Robot")
+@TeleOp(name = "TAprilTag[", group = "Robot")
 public class TAprilTag extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -32,7 +32,7 @@ public class TAprilTag extends LinearOpMode {
     double cy = 245.959325;
 
     // UNITS ARE METERS
-    double tagsize = 0.166;
+    double tagsize = 0.04;
 
     int numFramesWithoutDetection = 0;
 
