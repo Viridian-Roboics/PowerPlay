@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Testing;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,14 +17,12 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvInternalCamera2;
 
 import java.util.ArrayList;
 
 
-@TeleOp(name = "TAprilTag[", group = "Robot")
-public class TAprilTag extends LinearOpMode {
+@TeleOp(name = "Actualauton", group = "Robot")
+public class Actualauton extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -132,11 +129,6 @@ public class TAprilTag extends LinearOpMode {
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        telemetry.addData("Status", "Ready to rock and roll");
-        telemetry.update();
 
 
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -204,14 +196,13 @@ public class TAprilTag extends LinearOpMode {
                                 break;
                             }
                             case 2: {
-                                encoderDrive(.5, 1, false, 100);
-                                encoderDrive(.5, 1,true, 1000);
+                                encoderDrive(.75, 12, false, 10000);
                                 // case 2
                                 break;
                             }
                             case 3: {
-                                encoderDrive(.5, 1, false, 100);
-                                encoderDrive(.5, 1,true, 1000);
+                                encoderDrive(.75, 12, false, 10000);
+                                encoderDrive(.25, 8, true, 10000);
                                 // case 3
                                 break;
                             }
@@ -231,7 +222,15 @@ public class TAprilTag extends LinearOpMode {
 
         if (opModeIsActive()) {
             runtime.reset();
+            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+            FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             newMoveTarget = FL.getCurrentPosition() + (int)(MoveIN * COUNTS_PER_INCH);
             if (!strafe){
                 FL.setTargetPosition(newMoveTarget);

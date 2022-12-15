@@ -105,8 +105,8 @@ public class practiceauton extends LinearOpMode{
         runtime.reset();
 
         //movement code
-        encoderDrive(1, 7, false, 10000);
-        encoderDrive(1, 7, true, 10000);
+        encoderDrive(.75, 12, false, 10000);
+        encoderDrive(.25, -8, true, 10000);
 
     }
 
@@ -115,7 +115,15 @@ public class practiceauton extends LinearOpMode{
 
         if (opModeIsActive()) {
             runtime.reset();
+            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+            FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             newMoveTarget = FL.getCurrentPosition() + (int)(MoveIN * COUNTS_PER_INCH);
             if (!strafe){
                 FL.setTargetPosition(newMoveTarget);
@@ -135,6 +143,7 @@ public class practiceauton extends LinearOpMode{
                 BR.setPower(Math.abs(speed));
             }
             else{
+
                 FL.setTargetPosition(newMoveTarget);
                 FR.setTargetPosition(-newMoveTarget);
                 BL.setTargetPosition(-newMoveTarget);
