@@ -24,7 +24,7 @@ public class TAprilTag extends LinearOpMode {
 
     // Lens intrinsics
     // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C920 webcam at 800x448.
+    // NOTE: this calibration is for the C270 webcam at 800x448.
     // You will need to do your own calibration for other configurations!
     double fx = 1078.03779;
     double fy = 1084.50988;
