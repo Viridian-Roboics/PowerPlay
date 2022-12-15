@@ -20,7 +20,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-
 @TeleOp(name = "Actualauton", group = "Robot")
 public class Actualauton extends LinearOpMode {
     OpenCvCamera camera;
@@ -89,6 +88,10 @@ public class Actualauton extends LinearOpMode {
     private int MiddleLift = 200;
     private int TopLift = 300;
     private int ConeLift = 50;
+
+    void grabConeRoutine() {
+
+    }
 
 
     @Override
@@ -190,17 +193,20 @@ public class Actualauton extends LinearOpMode {
                         // ignore warnings, they'll disappear when you add motor movement
                         switch (detectedId) {
                             case 1: {
+                                grabConeRoutine();
                                 encoderDrive(.5, 1, false, 100);
                                 encoderDrive(.5, 1,true, 1000);
                                 // case 1
                                 break;
                             }
                             case 2: {
+                                grabConeRoutine();
                                 encoderDrive(.75, 12, false, 10000);
                                 // case 2
                                 break;
                             }
                             case 3: {
+                                grabConeRoutine();
                                 encoderDrive(.75, 12, false, 10000);
                                 encoderDrive(.25, 8, true, 10000);
                                 // case 3
