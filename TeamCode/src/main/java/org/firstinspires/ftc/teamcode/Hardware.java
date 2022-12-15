@@ -29,41 +29,15 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-/**
- * This is NOT an opmode.
- *
- * This class can be used to define all the specific hardware for a single robot.
- * In this case that robot is a Pushbot.
- * See PushbotTeleopTank_Iterative and others classes starting with "Pushbot" for usage examples.
- *
- * This hardware class assumes the following device names have been configured on the robot:
- * Note:  All names are lower case and some have single spaces between words.
- *
- * Motor channel:  Left  drive motor:        "left_drive"
- * Motor channel:  Right drive motor:        "right_drive"
- * Motor channel:  Manipulator drive motor:  "left_arm"
- * Servo channel:  Servo to open left claw:  "left_hand"
- * Servo channel:  Servo to open right claw: "right_hand"
- */
+/* HARDWARE MAP - all hardware should be initialized here */
+
 public class Hardware
 {
-    /* Public OpMode members. */
-    public DcMotor  m0   = null;
-    public DcMotor  m1  = null;
-    public DcMotor  m2   = null;
-    public DcMotor  m3  = null;
-    public NormalizedColorSensor colorSensor = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
-    private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
     public Hardware(){
@@ -74,34 +48,6 @@ public class Hardware
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
-
-        // Define and Initialize Motors
-        m0  = hwMap.get(DcMotor.class, "left_drive");
-        m1 = hwMap.get(DcMotor.class, "right_drive");
-        m2  = hwMap.get(DcMotor.class, "left_drive");
-        m3 = hwMap.get(DcMotor.class, "right_drive");
-        colorSensor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
-
-        //left motors
-        m0.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        m2.setDirection(DcMotor.Direction.FORWARD);
-
-        //right motors
-        m1.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        m3.setDirection(DcMotor.Direction.REVERSE);
-
-        // Set all motors to zero power
-        m0.setPower(0);
-        m1.setPower(0);
-        m2.setPower(0);
-        m3.setPower(0);
-
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
-        m0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        m1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        m0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        m1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
 
