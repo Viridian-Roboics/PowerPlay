@@ -194,8 +194,8 @@ public class Actualauton extends LinearOpMode {
                         switch (detectedId) {
                             case 1: {
                                 grabConeRoutine();
-                                encoderDrive(.5, 1, false, 100);
-                                encoderDrive(.5, 1,true, 1000);
+                                encoderDrive(.35, 12, false, 1000);
+                                encoderDrive(.5, -8,true, 1000);
                                 // case 1
                                 break;
                             }
