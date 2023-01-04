@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.Teliops;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.util.Set;
 
 // input buttons leftover: x
 // lift1     lift2
@@ -132,7 +129,7 @@ public class T1 extends LinearOpMode{
             } else if((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin || IgnoreLift)) {
                 RegMoveLift(-1, "Going Down", DLspeed);
             } else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
-                L1.setPower(0.0005);
+                L1.setPower(0);
             }
 
             if ((gamepad1.dpad_up || gamepad2.dpad_up) && L1.getCurrentPosition() != TopLift) {

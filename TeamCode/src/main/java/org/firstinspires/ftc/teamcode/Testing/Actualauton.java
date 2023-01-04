@@ -1,30 +1,56 @@
-package org.firstinspires.ftc.teamcode.Autons;
+package org.firstinspires.ftc.teamcode.Testing;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-// lift1     lift2
-@Autonomous(name="LeftAuton")
-public class LeftAuton extends LinearOpMode{
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
+import java.util.ArrayList;
+
+@TeleOp(name = "Actualauton", group = "Robot")
+public class Actualauton extends LinearOpMode {
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
+    static final double FEET_PER_METER = 3.28084;
+
+    // Lens intrinsics
+    // UNITS ARE PIXELS
+    // NOTE: this calibration is for the C270 webcam at 800x448.
+    // You will need to do your own calibration for other configurations!
+    double fx = 1078.03779;
+    double fy = 1084.50988;
+    double cx = 580.850545;
+    double cy = 245.959325;
+
+    // UNITS ARE METERS
+    double tagsize = 0.04;
+
+    int numFramesWithoutDetection = 0;
+
+    final float DECIMATION_HIGH = 3;
+    final float DECIMATION_LOW = 2;
+    final float THRESHOLD_HIGH_DECIMATION_RANGE_METERS = 1.0f;
+    final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
     //motors
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor FL = null;
     private DcMotor FR = null;
     private DcMotor BL = null;
     private DcMotor BR = null;
-    double Speed = .5;
-    double TSpeed = .5;
 
     //encoders
     static final double COUNTS_PER_MOTOR_REV = 1440 ;
@@ -57,21 +83,29 @@ public class LeftAuton extends LinearOpMode{
 
     //lift Vars
     private DcMotor L1 = null;
-    private int LMin = 0;
-    private int LMax = 0;
-    private int BottomLift = 0;
-    private int MiddleLift = 0;
-    private int TopLift = 0;
-    private int ConeLift = 0;
+    private DcMotor L2 = null;
+    private int BottomLift = 100;
+    private int MiddleLift = 200;
+    private int TopLift = 300;
+    private int ConeLift = 50;
+
+    void grabConeRoutine() {
+
+    }
 
 
     @Override
     public void runOpMode() {
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+
         FL = hardwareMap.get(DcMotor.class, "FL");
         FR = hardwareMap.get(DcMotor.class, "FR");
         BL = hardwareMap.get(DcMotor.class, "BL");
         BR = hardwareMap.get(DcMotor.class, "BR");
         L1 = hardwareMap.get(DcMotor.class, "lift1");
+        L2 = hardwareMap.get(DcMotor.class, "lift2");
         LServo = hardwareMap.get(Servo.class, "LServo");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
@@ -80,6 +114,7 @@ public class LeftAuton extends LinearOpMode{
         BR.setDirection(DcMotor.Direction.FORWARD);
 
         L1.setDirection(DcMotor.Direction.REVERSE);
+        L2.setDirection(DcMotor.Direction.FORWARD);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -97,43 +132,95 @@ public class LeftAuton extends LinearOpMode{
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        L1.setTargetPosition(LMin);
-        L1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        LMin = L1.getCurrentPosition();
-        LMax = LMin + 3884;
-        BottomLift = LMin + 1557;
-        MiddleLift = LMin + 2953;
-        TopLift = LMin + 3577;
-        ConeLift = LMin + 626;
 
-        telemetry.addData("Status", "Ready to rock and roll");
-        telemetry.update();
+        camera.setPipeline(aprilTagDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
+
+        });
 
         waitForStart();
-        runtime.reset();
 
-        //movement code
-        LServo.setPosition(.15);
-        encoderDrive(Speed, 12, true, 10000);
-        encoderDrive(Speed, 24, false, 10000);
-        encoderDrive(Speed, -12, true, 10000);
+        telemetry.setMsTransmissionInterval(50);
 
-        //cone cycle
-        LiftPosSet(TopLift);
-        LServo.setPosition(0);
-        LiftPosSet(BottomLift);
-        turnToHeading(TSpeed, -90);
-        encoderDrive(Speed, 12, false, 10000);
-        LiftPosSet(ConeLift);
-        LServo.setPosition(.15);
-        turnToHeading(TSpeed, 90);
-        encoderDrive(Speed, 12, true, 10000);
+        while (opModeIsActive()) {
+            // Calling getDetectionsUpdate() will only return an object if there was a new frame
+            // processed since the last time we called it. Otherwise, it will return null. This
+            // enables us to only run logic when there has been a new frame, as opposed to the
+            // getLatestDetections() method which will always return an object.
+            ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
 
-        encoderDrive(Speed, 6, true, 10000);
-        encoderDrive(Speed, -12, false, 10000);
+            // If there's been a new frame...
+            if (detections != null) {
+                telemetry.addData("FPS", camera.getFps());
+                telemetry.addData("Overhead ms", camera.getOverheadTimeMs());
+                telemetry.addData("Pipeline ms", camera.getPipelineTimeMs());
 
+                // If we don't see any tags
+                if (detections.size() == 0) {
+                    numFramesWithoutDetection++;
 
+                    // If we haven't seen a tag for a few frames, lower the decimation
+                    // so we can hopefully pick one up if we're e.g. far back
+                    if (numFramesWithoutDetection >= THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION) {
+                        aprilTagDetectionPipeline.setDecimation(DECIMATION_LOW);
+                    }
+                }
+                // We do see tags!
+                else {
+                    numFramesWithoutDetection = 0;
+
+                    // If the target is within 1 meter, turn on high decimation to
+                    // increase the frame rate
+                    if (detections.get(0).pose.z < THRESHOLD_HIGH_DECIMATION_RANGE_METERS) {
+                        aprilTagDetectionPipeline.setDecimation(DECIMATION_HIGH);
+                    }
+
+                    for (AprilTagDetection detection : detections) {
+                        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+
+                        int detectedId = detection.id;
+
+                        // ignore warnings, they'll disappear when you add motor movement
+                        switch (detectedId) {
+                            case 1: {
+                                grabConeRoutine();
+                                encoderDrive(.5, 1, false, 100);
+                                encoderDrive(.5, 1,true, 1000);
+                                // case 1
+                                break;
+                            }
+                            case 2: {
+                                grabConeRoutine();
+                                encoderDrive(.75, 12, false, 10000);
+                                // case 2
+                                break;
+                            }
+                            case 3: {
+                                grabConeRoutine();
+                                encoderDrive(.75, 12, false, 10000);
+                                encoderDrive(.25, 8, true, 10000);
+                                // case 3
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                telemetry.update();
+            }
+
+            sleep(20);
+        }
     }
 
     public void encoderDrive(double speed, double MoveIN, boolean strafe, double timeoutS) {
@@ -141,7 +228,15 @@ public class LeftAuton extends LinearOpMode{
 
         if (opModeIsActive()) {
             runtime.reset();
+            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+            FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             newMoveTarget = FL.getCurrentPosition() + (int)(MoveIN * COUNTS_PER_INCH);
             if (!strafe){
                 FL.setTargetPosition(newMoveTarget);
@@ -251,19 +346,18 @@ public class LeftAuton extends LinearOpMode{
     }
 
     public void LiftPosSet(int LiftTo){
-        if (LiftTo >= L1.getCurrentPosition()) {
+        if (LiftTo > L1.getCurrentPosition()) {
             L1.setTargetPosition(LiftTo);
+            L2.setTargetPosition(LiftTo);
             L1.setPower(1);
-        }
-        else if (LiftTo < L1.getCurrentPosition()){
-            L1.setTargetPosition(LiftTo);
-            L1.setPower(.5);
+            L2.setPower(1);
         }
         if (L1.isBusy()){
 
         }
         else{
             L1.setPower(0);
+            L2.setPower(0);
         }
     }
 }
