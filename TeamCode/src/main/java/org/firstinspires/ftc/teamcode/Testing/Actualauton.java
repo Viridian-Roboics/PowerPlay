@@ -59,7 +59,7 @@ public class Actualauton extends LinearOpMode {
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
 
-    //gryo
+    //gry
     private BNO055IMU imu = null;
     private double robotHeading  = 0;
     private double headingOffset = 0;
@@ -194,8 +194,8 @@ public class Actualauton extends LinearOpMode {
                         switch (detectedId) {
                             case 1: {
                                 grabConeRoutine();
-                                encoderDrive(.5, 1, false, 100);
-                                encoderDrive(.5, 1,true, 1000);
+                                encoderDrive(.35, 12, false, 1000);
+                                encoderDrive(.5, -9,true, 1000);
                                 // case 1
                                 break;
                             }
