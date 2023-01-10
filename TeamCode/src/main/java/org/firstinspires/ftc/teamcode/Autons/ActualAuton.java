@@ -97,14 +97,30 @@ public class ActualAuton extends LinearOpMode {
 
     void grabConeRoutine() {
         /* Basic (Untested) Routine */
+
+        /* Get a cone and drop it */
         encoderDrive(moveSpeed, moveForwardDist*2, false, 10000, false);
         turnDegrees(90);
-        LServo.setPosition(.9);
+
+        // Untested
+        /*GServo.setPosition(.9);
         MoveLift(MiddleLift);
+        GServo.setPosition(0);
         encoderDrive(moveSpeed, -moveForwardDist, false, 10000, true);
         turnDegrees(180);
         MoveLift(TopLift);
-        LServo.setPosition(0);
+        LServo.setPosition(.9);
+        sleep(100);
+        GServo.setPosition(0);*/
+
+        /* Return to middle */
+
+        /* Go to Correct Spot */
+        switch (detectedZone) {
+            case 1: {break;}
+            case 2: {break;}
+            case 3: {break;}
+        }
     }
 
     private int MoveLift(int GoalPos) {
@@ -175,8 +191,7 @@ public class ActualAuton extends LinearOpMode {
         BL = hardwareMap.get(DcMotor.class, "BL");
         BR = hardwareMap.get(DcMotor.class, "BR");
         L1 = hardwareMap.get(DcMotor.class, "lift1");
-        L2 = hardwareMap.get(DcMotor.class, "lift2");
-        LServo = hardwareMap.get(Servo.class, "LServo");
+        GServo = hardwareMap.get(Servo.class, "LServo");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.FORWARD);
