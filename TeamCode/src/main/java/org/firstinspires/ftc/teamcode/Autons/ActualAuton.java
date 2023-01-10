@@ -18,6 +18,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 
 @Autonomous(name = "Complex Auton", group = "Robot")
@@ -87,6 +88,7 @@ public class ActualAuton extends LinearOpMode {
     private int MiddleLift = 200;
     private int TopLift = 300;
     private int ConeLift = 50;
+    private int Ltarget = 0;
 
     final double moveSpeed = 0.25;
     final int moveForwardDist = 8;
@@ -98,36 +100,10 @@ public class ActualAuton extends LinearOpMode {
     void grabConeRoutine() {
         /* Basic (Untested) Routine */
 
-        /* Get a cone and drop it */
-        encoderDrive(moveSpeed, moveForwardDist*2, false, 10000, false);
-        turnDegrees(90);
-
-        // Untested
-        /*GServo.setPosition(.9);
-        MoveLift(MiddleLift);
-        GServo.setPosition(0);
-        encoderDrive(moveSpeed, -moveForwardDist, false, 10000, true);
-        turnDegrees(180);
-        MoveLift(TopLift);
-        LServo.setPosition(.9);
-        sleep(100);
-        GServo.setPosition(0);*/
-
-        /* Return to middle */
-
-        /* Go to Correct Spot */
-        switch (detectedZone) {
-            case 1: {break;}
-            case 2: {break;}
-            case 3: {break;}
-        }
-    }
-
-    private int MoveLift(int GoalPos) {
-        L1.setTargetPosition(GoalPos);
-        L1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        L1.setTargetPosition(GoalPos);
-        return GoalPos;
+        encoderDrive(0.5, 6, true, 10000, true);
+        encoderDrive(0.5, 13, false, 10000, true);
+        encoderDrive(0.5, -4, true, 10000, true);
+        LiftPosSet(300,.5);
     }
 
     void turnDegrees(int degrees) {
@@ -141,8 +117,8 @@ public class ActualAuton extends LinearOpMode {
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        int degreeRatio = (int) 1000.0 / 135;
-        int newMoveTarget = FL.getCurrentPosition() + (degreeRatio * 90);
+        int degreeRatio = (int) 1000.0 / 120;
+        int newMoveTarget = FL.getCurrentPosition() + (degreeRatio * degrees);
 
         FL.setTargetPosition(-newMoveTarget);
         FR.setTargetPosition(newMoveTarget);
@@ -191,7 +167,7 @@ public class ActualAuton extends LinearOpMode {
         BL = hardwareMap.get(DcMotor.class, "BL");
         BR = hardwareMap.get(DcMotor.class, "BR");
         L1 = hardwareMap.get(DcMotor.class, "lift1");
-        GServo = hardwareMap.get(Servo.class, "LServo");
+        LServo = hardwareMap.get(Servo.class, "LServo");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.FORWARD);
@@ -199,7 +175,6 @@ public class ActualAuton extends LinearOpMode {
         BR.setDirection(DcMotor.Direction.FORWARD);
 
         L1.setDirection(DcMotor.Direction.REVERSE);
-        L2.setDirection(DcMotor.Direction.FORWARD);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -438,19 +413,13 @@ public class ActualAuton extends LinearOpMode {
         robotHeading = 0;
     }
 
-    public void LiftPosSet(int LiftTo){
-        if (LiftTo > L1.getCurrentPosition()) {
-            L1.setTargetPosition(LiftTo);
-            L2.setTargetPosition(LiftTo);
-            L1.setPower(1);
-            L2.setPower(1);
-        }
-        if (L1.isBusy()){
+    public void LiftPosSet(int LiftTo, double speed){
 
+            L1.setTargetPosition(LiftTo);
+            L1.setPower(1);
+            runtime.reset();
+            L1.setPower(Math.abs(speed));
         }
-        else{
-            L1.setPower(0);
-            L2.setPower(0);
-        }
-    }
+
 }
+
