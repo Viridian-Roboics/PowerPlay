@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.Testing;
+package org.firstinspires.ftc.teamcode.Autons;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,8 +20,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@TeleOp(name = "Actualauton", group = "Robot")
-public class ActualAuton extends LinearOpMode {
+@Autonomous(name = "Base Auton (Most Basic)", group = "Robot")
+public class BaseAuton extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -52,17 +52,17 @@ public class ActualAuton extends LinearOpMode {
     private DcMotor BR = null;
 
     //encoders
-    static final double COUNTS_PER_MOTOR_REV = 1440 ;
-    static final double DRIVE_GEAR_REDUCTION = 1.0 ;
-    static final double WHEEL_DIAMETER_INCHES = 4.0 ;
+    static final double COUNTS_PER_MOTOR_REV = 1440;
+    static final double DRIVE_GEAR_REDUCTION = 1.0;
+    static final double WHEEL_DIAMETER_INCHES = 4.0;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
 
     //gry
     private BNO055IMU imu = null;
-    private double robotHeading  = 0;
+    private double robotHeading = 0;
     private double headingOffset = 0;
-    private double headingError  = 0;
+    private double headingError = 0;
 
     private double targetHeading = 0;
     private double driveSpeed = 0;
@@ -83,71 +83,12 @@ public class ActualAuton extends LinearOpMode {
     //lift Vars
     private DcMotor L1 = null;
     private DcMotor L2 = null;
-    private int BottomLift = 100;
-    private int MiddleLift = 200;
-    private int TopLift = 300;
-    private int ConeLift = 50;
 
     final double moveSpeed = 0.25;
     final int moveForwardDist = 8;
     final int directionalOffset = 8;
 
     boolean detected = false;
-
-    void grabConeRoutine() {
-        //encoderDrive(moveSpeed, moveForwardDist*3, false, 10000);
-        turnDegrees(90);
-    }
-
-    void turnDegrees(int degrees) {
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        int degreeRatio = (int) 1000.0 / 135;
-        int newMoveTarget = FL.getCurrentPosition() + (degreeRatio * 90);
-
-        FL.setTargetPosition(-newMoveTarget);
-        FR.setTargetPosition(newMoveTarget);
-        BL.setTargetPosition(-newMoveTarget);
-        BR.setTargetPosition(newMoveTarget);
-
-        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        runtime.reset();
-        FL.setPower(Math.abs(moveSpeed));
-        FR.setPower(Math.abs(moveSpeed));
-        BL.setPower(Math.abs(moveSpeed));
-        BR.setPower(Math.abs(moveSpeed));
-
-        while (opModeIsActive() && (runtime.seconds() < 10000) && (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
-            telemetry.addData("Running to", " %7d", newMoveTarget);
-            telemetry.addData("Currently at",  " at %7d :%7d :%7d :%7d", FL.getCurrentPosition(), FR.getCurrentPosition(), BL.getCurrentPosition(), BR.getCurrentPosition());
-            telemetry.update();
-        }
-
-        FL.setPower(0);
-        FR.setPower(0);
-        BL.setPower(0);
-        BR.setPower(0);
-
-        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        sleep(100);
-    }
-
 
     @Override
     public void runOpMode() {
@@ -188,7 +129,6 @@ public class ActualAuton extends LinearOpMode {
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -223,8 +163,7 @@ public class ActualAuton extends LinearOpMode {
                 // If we don't see any tags
                 if (detected) {
                     telemetry.addData("Status", "Already detected, stopping");
-                }
-                else if (detections.size() == 0) {
+                } else if (detections.size() == 0) {
                     numFramesWithoutDetection++;
 
                     // If we haven't seen a tag for a few frames, lower the decimation
@@ -252,23 +191,18 @@ public class ActualAuton extends LinearOpMode {
                         // ignore warnings, they'll disappear when you add motor movement
                         switch (detectedId) {
                             case 1: {
-                                grabConeRoutine();
-                                //encoderDrive(moveSpeed, moveForwardDist, false, 1000, true);
-                                //encoderDrive(moveSpeed, -directionalOffset,true, 1000, true);
+                                encoderDrive(moveSpeed, moveForwardDist, false, 1000, true);
+                                encoderDrive(moveSpeed, -directionalOffset, true, 1000, true);
                                 // case 1
                                 break;
                             }
                             case 2: {
-                                grabConeRoutine();
-                                //encoderDrive(moveSpeed, moveForwardDist, false, 10000, true);
-                                // case 2
+                                encoderDrive(moveSpeed, moveForwardDist, false, 10000, true);
                                 break;
                             }
                             case 3: {
-                                grabConeRoutine();
-                            //encoderDrive(moveSpeed, moveForwardDist, false, 10000, true);
-                                //encoderDrive(moveSpeed, directionalOffset, true, 10000, true);
-                                // case 3
+                                encoderDrive(moveSpeed, moveForwardDist, false, 10000, true);
+                                encoderDrive(moveSpeed, directionalOffset, true, 10000, true);
                                 break;
                             }
                         }
@@ -296,8 +230,8 @@ public class ActualAuton extends LinearOpMode {
             FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            newMoveTarget = FL.getCurrentPosition() + (int)(MoveIN * COUNTS_PER_INCH);
-            if (!strafe){
+            newMoveTarget = FL.getCurrentPosition() + (int) (MoveIN * COUNTS_PER_INCH);
+            if (!strafe) {
                 FL.setTargetPosition(newMoveTarget);
                 FR.setTargetPosition(newMoveTarget);
                 BL.setTargetPosition(newMoveTarget);
@@ -313,8 +247,7 @@ public class ActualAuton extends LinearOpMode {
                 FR.setPower(Math.abs(speed));
                 BL.setPower(Math.abs(speed));
                 BR.setPower(Math.abs(speed));
-            }
-            else{
+            } else {
                 FL.setTargetPosition(newMoveTarget);
                 FR.setTargetPosition(-newMoveTarget);
                 BL.setTargetPosition(-newMoveTarget);
@@ -334,7 +267,7 @@ public class ActualAuton extends LinearOpMode {
 
             while (opModeIsActive() && (runtime.seconds() < timeoutS) && (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
                 telemetry.addData("Running to", " %7d", newMoveTarget);
-                telemetry.addData("Currently at",  " at %7d :%7d :%7d :%7d", FL.getCurrentPosition(), FR.getCurrentPosition(), BL.getCurrentPosition(), BR.getCurrentPosition());
+                telemetry.addData("Currently at", " at %7d :%7d :%7d :%7d", FL.getCurrentPosition(), FR.getCurrentPosition(), BL.getCurrentPosition(), BR.getCurrentPosition());
                 telemetry.update();
             }
 
@@ -368,14 +301,13 @@ public class ActualAuton extends LinearOpMode {
 
     public void moveRobot(double drive, double turn) {
         driveSpeed = drive;
-        turnSpeed  = turn;
+        turnSpeed = turn;
 
-        leftSpeed  = drive - turn;
+        leftSpeed = drive - turn;
         rightSpeed = drive + turn;
 
         double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-        if (max > 1.0)
-        {
+        if (max > 1.0) {
             leftSpeed /= max;
             rightSpeed /= max;
         }
@@ -391,7 +323,7 @@ public class ActualAuton extends LinearOpMode {
         robotHeading = getRawHeading() - headingOffset;
         headingError = targetHeading - robotHeading;
 
-        while (headingError > 180)  headingError -= 360;
+        while (headingError > 180) headingError -= 360;
         while (headingError <= -180) headingError += 360;
 
         return Range.clip(headingError * proportionalGain, -1, 1);
@@ -407,17 +339,16 @@ public class ActualAuton extends LinearOpMode {
         robotHeading = 0;
     }
 
-    public void LiftPosSet(int LiftTo){
+    public void LiftPosSet(int LiftTo) {
         if (LiftTo > L1.getCurrentPosition()) {
             L1.setTargetPosition(LiftTo);
             L2.setTargetPosition(LiftTo);
             L1.setPower(1);
             L2.setPower(1);
         }
-        if (L1.isBusy()){
+        if (L1.isBusy()) {
 
-        }
-        else{
+        } else {
             L1.setPower(0);
             L2.setPower(0);
         }
