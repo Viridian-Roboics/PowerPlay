@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 // lift1     lift2
+@Disabled
 @Autonomous(name="RightAuton")
 public class RightAuton extends LinearOpMode{
     //motors
