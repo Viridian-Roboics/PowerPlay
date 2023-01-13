@@ -79,6 +79,7 @@ public class FinalAuton extends LinearOpMode {
 
     //servo Vars
     private Servo LServo = null;
+    private Servo PServo = null;
 
     //lift Vars
     private DcMotor L1 = null;
@@ -99,10 +100,6 @@ public class FinalAuton extends LinearOpMode {
     void grabConeRoutine() {
         /* Basic (Untested) Routine */
 
-        encoderDrive(0.5, 6, true, 10000, true);
-        encoderDrive(0.5, 13, false, 10000, true);
-        encoderDrive(0.5, -4, true, 10000, true);
-        LiftPosSet(300,.5);
     }
 
     void turnDegrees(int degrees) {
@@ -167,6 +164,7 @@ public class FinalAuton extends LinearOpMode {
         BR = hardwareMap.get(DcMotor.class, "BR");
         L1 = hardwareMap.get(DcMotor.class, "lift1");
         LServo = hardwareMap.get(Servo.class, "LServo");
+        PServo = hardwareMap.get(Servo.class, "PickServo");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.FORWARD);
@@ -258,22 +256,65 @@ public class FinalAuton extends LinearOpMode {
                         switch (detectedId) {
                             case 1: {
                                 grabConeRoutine();
-                                //encoderDrive(moveSpeed, moveForwardDist, false, 1000, true);
-                                //encoderDrive(moveSpeed, -directionalOffset,true, 1000, true);
+                                LServo.setPosition(0);
+                                encoderDrive(0.5, 6, true, 10000, true);
+                                encoderDrive(0.25, 13, false, 10000, true);
+                                LServo.setPosition(.0);
+                                encoderDrive(0.5, -4, true, 10000, true);
+
+                                LiftPosSet(300,1);
+
+                                LServo.setPosition(1);
+                                sleep(100);
+                                PServo.setPosition(1);
+                                sleep(100);
+                                LServo.setPosition(0);
+                                sleep(100);
+                                LiftPosSet(50,1);
+                                encoderDrive(.5, -8, true, 10000,true);
+
                                 // case 1
                                 break;
                             }
                             case 2: {
                                 grabConeRoutine();
-                                //encoderDrive(moveSpeed, moveForwardDist, false, 10000, true);
-                                // case 2
+
+                                LServo.setPosition(0);
+                                encoderDrive(0.5, 6, true, 10000, true);
+                                encoderDrive(0.25, 13, false, 10000, true);
+                                LServo.setPosition(.0);
+                                encoderDrive(0.5, -4, true, 10000, true);
+
+                                LiftPosSet(300,1);
+
+                                LServo.setPosition(1);
+                                sleep(100);
+                                PServo.setPosition(1);
+                                sleep(100);
+                                LServo.setPosition(0);
+                                sleep(100);
+                                LiftPosSet(50,1);
+                                encoderDrive(.5, -4, true, 10000,true);
                                 break;
                             }
                             case 3: {
                                 grabConeRoutine();
-                                //encoderDrive(moveSpeed, moveForwardDist, false, 10000, true);
-                                //encoderDrive(moveSpeed, directionalOffset, true, 10000, true);
-                                // case 3
+                                LServo.setPosition(0);
+                                encoderDrive(0.5, 6, true, 10000, true);
+                                encoderDrive(0.25, 13, false, 10000, true);
+                                LServo.setPosition(.0);
+                                encoderDrive(0.5, -4, true, 10000, true);
+
+                                LiftPosSet(300,1);
+
+                                LServo.setPosition(1);
+                                sleep(100);
+                                PServo.setPosition(1);
+                                sleep(100);
+                                LServo.setPosition(0);
+                                sleep(100);
+                                LiftPosSet(50,1);
+                                encoderDrive(.5, 5, true, 10000,true);
                                 break;
                             }
                         }
@@ -418,6 +459,8 @@ public class FinalAuton extends LinearOpMode {
         L1.setPower(1);
         runtime.reset();
         L1.setPower(Math.abs(speed));
+        sleep(2000);
     }
+
 
 }
