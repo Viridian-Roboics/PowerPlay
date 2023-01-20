@@ -46,7 +46,7 @@ public class T1 extends LinearOpMode{
     private double TopPick = 0;
     private double BottomPick = 1;
         //main grabber
-    private double TopL = 0;
+    private double TopL = .1;
     private double BottomL = .3;
     private int ClawBlock = 0;
     private int PickBlock = 0;
@@ -152,6 +152,17 @@ public class T1 extends LinearOpMode{
             }
 
             //claw
+            //if something keeps being weird with claw
+            // if (gamepad1.a || gamepad2.a){
+            // Lservo.setPosition(TopL);
+            // }
+            //if (gamepad1.x || gamepad2.x){
+            // Lservo.setPosition(BottomL);
+            // }
+            //
+            //
+            //
+
             if (ClawBlock == 0) {
                 if ((gamepad1.a || gamepad2.a) && Lopen) {
 //                    sleep(500);
