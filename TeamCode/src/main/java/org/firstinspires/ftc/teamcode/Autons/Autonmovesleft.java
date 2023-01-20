@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -17,11 +18,11 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import java.lang.annotation.Target;
+
 import java.util.ArrayList;
 
-@Autonomous(name = "Complex Auton moves right", group = "Robot")
-public class FinalAuton extends LinearOpMode {
+@Autonomous(name = "Complex Auton moves left", group = "Robot")
+public class Autonmovesleft extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -255,14 +256,14 @@ public class FinalAuton extends LinearOpMode {
                             case 1: {
                                 grabConeRoutine();
                                 LServo.setPosition(0);
-                                encoderDrive(0.25, 6.5, true, 10000, true);
+                                encoderDrive(0.25, -6.5, true, 10000, true);
                                 encoderDrive(0.2, 13, false, 10000, true);
                                 LServo.setPosition(.0);
-                                encoderDrive(0.5, -3, true, 10000, true);
-                                encoderDrive(.5, 1, false, 1000, true);
+                                encoderDrive(0.5, 3, true, 10000, true);
+                                encoderDrive(.5, 1, false, 10000, true);
 
 
-                                LiftPosSet(TopLift, 1, true);
+                                LiftPosSet(TopLift, 1,true);
 
                                 LServo.setPosition(1);
                                 sleep(2000);
@@ -270,11 +271,10 @@ public class FinalAuton extends LinearOpMode {
                                 sleep(2000);
                                 LServo.setPosition(0);
                                 sleep(250);
-                                encoderDrive(.5, -3.5, true, 10000, true);
-                                encoderDrive(.5, -6.5, false, 1000, true);
-                                encoderDrive(.5, -6.5, true, 1000, true);
+                                encoderDrive(.5, -4, true, 10000, true);
 
-                                LiftPosSet(ConeLift, 1, true);
+
+                                LiftPosSet(ConeLift, 1,true);
                                 encoderDrive(.5,.001,false,10000,true);
 
                                 // case 1
@@ -284,12 +284,12 @@ public class FinalAuton extends LinearOpMode {
                                 grabConeRoutine();
 
                                 LServo.setPosition(0);
-                                encoderDrive(0.25, 6.5, true, 10000, true);
+                                encoderDrive(0.25, -6.5, true, 10000, true);
                                 encoderDrive(0.2, 13, false, 10000, true);
                                 LServo.setPosition(.0);
-                                encoderDrive(0.5, -3.75, true, 10000, true);
+                                encoderDrive(0.5, 3.75, true, 10000, true);
                                 encoderDrive(.5, 1, false, 1000, true);
-                                LiftPosSet(250, 1, true);
+                                LiftPosSet(250, 1,true);
 
                                 LServo.setPosition(1);
                                 sleep(2000);
@@ -298,18 +298,18 @@ public class FinalAuton extends LinearOpMode {
                                 LServo.setPosition(0);
                                 sleep(200);
 
-                                encoderDrive(.5, -3, true, 10000, true);
-                                LiftPosSet(ConeLift, 1,true);
+                                encoderDrive(.5, 3, true, 10000, true);
+                                LiftPosSet(ConeLift, 1, true);
                                 encoderDrive(.5,.001,false,10000,true);
                                 break;
                             }
                             case 3: {
                                 grabConeRoutine();
                                 LServo.setPosition(0);
-                                encoderDrive(0.25, 6.5, true, 10000, true);
+                                encoderDrive(0.25, -6.5, true, 10000, true);
                                 encoderDrive(0.2, 13, false, 10000, true);
                                 LServo.setPosition(.0);
-                                encoderDrive(0.5, -3.9, true, 10000, true);
+                                encoderDrive(0.5, 3.9, true, 10000, true);
                                 encoderDrive(.5, .75, false, 10000, true);
                                 LiftPosSet(225, 1,true);
 
@@ -320,8 +320,10 @@ public class FinalAuton extends LinearOpMode {
                                 LServo.setPosition(0);
                                 sleep(200);
 
-                                encoderDrive(.5, 4, true, 10000, true);
-                                LiftPosSet(ConeLift, 1,true);
+                                encoderDrive(.5, 3.5, true, 10000, true);
+                                encoderDrive(.5, -6.5, false, 1000, true);
+                                encoderDrive(.5, 6.5, true, 1000, true);
+                                LiftPosSet(ConeLift, 1, true);
                                 encoderDrive(.5,.001,false,10000,true);
                                 break;
                             }

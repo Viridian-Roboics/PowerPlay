@@ -47,7 +47,7 @@ public class T1 extends LinearOpMode{
     private double BottomPick = 1;
         //main grabber
     private double TopL = 0;
-    private double BottomL = .9;
+    private double BottomL = .3;
     private int ClawBlock = 0;
     private int PickBlock = 0;
 
@@ -77,11 +77,11 @@ public class T1 extends LinearOpMode{
         L1.setDirection(DcMotor.Direction.REVERSE);
 
         LMin = L1.getCurrentPosition();
-        LMax = LMin + 2762;
-        BottomLift = LMin + 1490;
-        MiddleLift = LMin + 2279;
-        TopLift = LMin + 2762;
-        ConeLift = LMin + 1000;
+        LMax = LMin + 4000;
+        BottomLift = LMin + 1379;
+        MiddleLift = LMin + 2189;
+        TopLift = LMin + 2718;
+        ConeLift = LMin + 614;
 
 
         telemetry.addData("Status", "Initialized");
@@ -154,11 +154,11 @@ public class T1 extends LinearOpMode{
             //claw
             if (ClawBlock == 0) {
                 if ((gamepad1.a || gamepad2.a) && Lopen) {
-                    sleep(500);
+//                    sleep(500);
                     Lopen = false;
                     LServo.setPosition(TopL);
                 } else if ((gamepad1.a || gamepad2.a) && !Lopen) {
-                    sleep(500);
+//                    sleep(500);
                     Lopen = true;
                     LServo.setPosition(BottomL);
                 }
