@@ -53,9 +53,9 @@ public class Practicebutupdated extends LinearOpMode {
     private DcMotor BR = null;
 
     //encoders
-    static final double COUNTS_PER_MOTOR_REV = 1440;
+    static final double COUNTS_PER_MOTOR_REV = 384.5;
     static final double DRIVE_GEAR_REDUCTION = 1.0;
-    static final double WHEEL_DIAMETER_INCHES = 4.0;
+    static final double WHEEL_DIAMETER_INCHES = 3.5;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
 
@@ -99,7 +99,7 @@ public class Practicebutupdated extends LinearOpMode {
     int detectedZone = -1;
 
     void grabConeRoutine() {
-        /* Basic (Untested) Routine */
+        encoderDrive(1,1,false,1000,true);
 
     }
 
@@ -238,9 +238,7 @@ public class Practicebutupdated extends LinearOpMode {
                 else {
                     numFramesWithoutDetection = 0;
 
-                    // If the target is within 1 meter, turn on high decimation to
-                    // increase the frame rate
-                    if (detections.get(0).pose.z < THRESHOLD_HIGH_DECIMATION_RANGE_METERS) {
+                    // If the target is within 1 meter, turn on high decimation get(0).pose.z < THRESHOLD_HIGH_DECIMATION_RANGE_METERS) {
                         aprilTagDetectionPipeline.setDecimation(DECIMATION_HIGH);
                     }
 
@@ -253,30 +251,31 @@ public class Practicebutupdated extends LinearOpMode {
 
                         // ignore warnings, they'll disappear when you add motor movement
                         switch (detectedId) {
-                            case 1: {
+                           case 1: {
                                 grabConeRoutine();
-                                LServo.setPosition(0);
-                                encoderDrive(0.25, 6.5, true, 10000, true);
-                                encoderDrive(0.2, 13, false, 10000, true);
-                                LServo.setPosition(.0);
-                                encoderDrive(0.5, -3, true, 10000, true);
-                                encoderDrive(.5, 1, false, 1000, true);
+
+                               LServo.setPosition(0);
+                               encoderDrive(0.25, 13.334, true, 10000, true);
+                               encoderDrive(0.2, 26.667, false, 10000, true);
+                               LServo.setPosition(.0);
+                               encoderDrive(0.5, -6.667, true, 10000, true);
+                               encoderDrive(.5, 1.667, false, 1000, true);
+                               LiftPosSet(250, 1, 1000, true);
+
+                               LServo.setPosition(1);
+                               sleep(2000);
+                               PServo.setPosition(.5);
+                               sleep(2000);
+                               LServo.setPosition(0);
+                               sleep(200);
+
+                               encoderDrive(.5, -2.788, true, 10000, true);
+                               encoderDrive(.5,-13.336,false, 1000, true);
+                               encoderDrive(.5, -11.944,true,1000,true);
+                               LiftPosSet(ConeLift, 1,1000, true);
+                               encoderDrive(.5,.001,false,10000,true);
 
 
-                                LiftPosSet(TopLift, 1, true);
-
-                                LServo.setPosition(1);
-                                sleep(2000);
-                                PServo.setPosition(.5);
-                                sleep(2000);
-                                LServo.setPosition(0);
-                                sleep(250);
-                                encoderDrive(.5, -3.5, true, 10000, true);
-                                encoderDrive(.5, -6.5, false, 1000, true);
-                                encoderDrive(.5, -6.5, true, 1000, true);
-
-                                LiftPosSet(ConeLift, 1, true);
-                                encoderDrive(.5,.001,false,10000,true);
 
                                 // case 1
                                 break;
@@ -285,12 +284,12 @@ public class Practicebutupdated extends LinearOpMode {
                                 grabConeRoutine();
 
                                 LServo.setPosition(0);
-                                encoderDrive(0.25, 6.5, true, 10000, true);
-                                encoderDrive(0.2, 13, false, 10000, true);
+                                encoderDrive(0.25, 13.334, true, 10000, true);
+                                encoderDrive(0.2, 26.667, false, 10000, true);
                                 LServo.setPosition(.0);
-                                encoderDrive(0.5, -3.75, true, 10000, true);
-                                encoderDrive(.5, 1, false, 1000, true);
-                                LiftPosSet(250, 1, true);
+                                encoderDrive(0.5, -6.667, true, 10000, true);
+                                encoderDrive(.5, 1.667, false, 1000, true);
+                                LiftPosSet(250, 1, 1000, true);
 
                                 LServo.setPosition(1);
                                 sleep(2000);
@@ -299,30 +298,29 @@ public class Practicebutupdated extends LinearOpMode {
                                 LServo.setPosition(0);
                                 sleep(200);
 
-                                encoderDrive(.5, -3, true, 10000, true);
-                                LiftPosSet(ConeLift, 1,true);
+                                encoderDrive(.5, -2.778, true, 10000, true);
+                                LiftPosSet(ConeLift, 1,1000, true);
                                 encoderDrive(.5,.001,false,10000,true);
                                 break;
                             }
                             case 3: {
                                 grabConeRoutine();
                                 LServo.setPosition(0);
-                                encoderDrive(0.25, 6.5, true, 10000, true);
-                                encoderDrive(0.2, 13, false, 10000, true);
+                                encoderDrive(0.25, 13.334, true, 10000, true);
+                                encoderDrive(0.2, 26.667, false, 10000, true);
                                 LServo.setPosition(.0);
-                                encoderDrive(0.5, -3.9, true, 10000, true);
-                                encoderDrive(.5, .75, false, 10000, true);
-                                LiftPosSet(225, 1,true);
+                                encoderDrive(0.5, -6.667, true, 10000, true);
+                                encoderDrive(.5, 1.667, false, 1000, true);
+                                LiftPosSet(250, 1, 1000, true);
 
                                 LServo.setPosition(1);
                                 sleep(2000);
-                                PServo.setPosition(1);
+                                PServo.setPosition(.5);
                                 sleep(2000);
                                 LServo.setPosition(0);
                                 sleep(200);
-
-                                encoderDrive(.5, 4, true, 10000, true);
-                                LiftPosSet(ConeLift, 1,true);
+                                encoderDrive(.5, 2.778, true, 10000, true);
+                                LiftPosSet(ConeLift, 1,1000,true);
                                 encoderDrive(.5,.001,false,10000,true);
                                 break;
                             }
@@ -336,7 +334,7 @@ public class Practicebutupdated extends LinearOpMode {
 
             sleep(20);
         }
-    }
+
 
     public void encoderDrive(double speed, double MoveIN, boolean strafe, double timeoutS, boolean sleep) {
         int newMoveTarget;
@@ -461,16 +459,31 @@ public class Practicebutupdated extends LinearOpMode {
         robotHeading = 0;
     }
 
-    public void LiftPosSet(int LiftTo, double speed, boolean sleep) {
+    public void LiftPosSet(int LiftTo, double speed, double timeoutS, boolean sleep ) {
 
         L1.setTargetPosition(LiftTo);
-        L1.setPower(1);
-        runtime.reset();
+
+   //     runtime.reset();
         L1.setPower(Math.abs(speed));
+
+
+
+
+
         if (sleep) {
-            sleep(100);
+            sleep(1000);
+
+        }
+        if(L1.getCurrentPosition() == LiftTo);{
+            L1.setPower(0.05);
+
+
+
         }
 
 
     }
+
+
 }
+

@@ -46,7 +46,7 @@ public class T1 extends LinearOpMode{
     private double TopPick = 0;
     private double BottomPick = 1;
         //main grabber
-    private double TopL = .1;
+    private double TopL = .0;
     private double BottomL = .3;
     private int ClawBlock = 0;
     private int PickBlock = 0;
@@ -197,10 +197,13 @@ public class T1 extends LinearOpMode{
             }
 
             //fuck lift restrictions
-            if ((gamepad1.y || gamepad2.y) && IgnoreLift == false){
-                IgnoreLift = true;
-            } else if ((gamepad1.y || gamepad2.y) && IgnoreLift == true){
-                IgnoreLift = false;
+            if (gamepad1.y || gamepad2.y) {
+                LMin = L1.getCurrentPosition();
+                LMax = LMin + 4000;
+                BottomLift = LMin + 1379;
+                MiddleLift = LMin + 2189;
+                TopLift = LMin + 2718;
+                ConeLift = LMin + 614;
             }
 
             FL.setPower(FLP);

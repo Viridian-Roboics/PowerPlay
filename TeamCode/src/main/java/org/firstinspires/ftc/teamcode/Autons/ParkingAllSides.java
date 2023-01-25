@@ -58,6 +58,7 @@ public class ParkingAllSides extends LinearOpMode {
     static final double WHEEL_DIAMETER_INCHES = 4.0;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
+    static final double DETECTION_LIMIT = 500;
 
     //gry
     private BNO055IMU imu = null;
@@ -163,9 +164,15 @@ public class ParkingAllSides extends LinearOpMode {
 
                 // If we don't see any tags
                 if (detected) {
-                    telemetry.addData("Status", "Already detected, stopping");
+                    telemetry.addData("Detection Status", "Already detected, stopping");
                 } else if (detections.size() == 0) {
                     numFramesWithoutDetection++;
+
+                    if (numFramesWithoutDetection >= DETECTION_LIMIT) {
+                        telemetry.addData("Detection Status", "No Zone Detected :( Going to Zone 2...");
+                        detected = true;
+                        continue;
+                    }
 
                     // If we haven't seen a tag for a few frames, lower the decimation
                     // so we can hopefully pick one up if we're e.g. far back
@@ -192,16 +199,19 @@ public class ParkingAllSides extends LinearOpMode {
                         // ignore warnings, they'll disappear when you add motor movement
                         switch (detectedId) {
                             case 1: {
+                                LServo.setPosition(0);
                                 encoderDrive(moveSpeed, moveForwardDist, false, 1000, true);
                                 encoderDrive(moveSpeed, -directionalOffset, true, 1000, true);
                                 // case 1
                                 break;
                             }
                             case 2: {
+                                LServo.setPosition(0);
                                 encoderDrive(moveSpeed, moveForwardDist, false, 10000, true);
                                 break;
                             }
                             case 3: {
+                                LServo.setPosition(0);
                                 encoderDrive(moveSpeed, moveForwardDist, false, 10000, true);
                                 encoderDrive(moveSpeed, directionalOffset, true, 10000, true);
                                 break;

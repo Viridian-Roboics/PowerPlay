@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
 
-@Autonomous(name = "Complex Auton moves right", group = "Robot")
+@Autonomous(name = "Complex Auton practicing moves right", group = "Robot")
 public class FinalAuton extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -52,11 +52,12 @@ public class FinalAuton extends LinearOpMode {
     private DcMotor BR = null;
 
     //encoders
-    static final double COUNTS_PER_MOTOR_REV = 1440;
+    static final double COUNTS_PER_MOTOR_REV =384.5;
     static final double DRIVE_GEAR_REDUCTION = 1.0;
-    static final double WHEEL_DIAMETER_INCHES = 4.0;
+    static final double WHEEL_DIAMETER_INCHES = 3.5;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
+    static final double DETECTION_LIMIT = 500;
 
     //gry
     private BNO055IMU imu = null;
@@ -215,6 +216,7 @@ public class FinalAuton extends LinearOpMode {
             // getLatestDetections() method which will always return an object.
             ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
 
+
             // If there's been a new frame...
             if (detections != null) {
                 telemetry.addData("FPS", camera.getFps());
@@ -223,9 +225,16 @@ public class FinalAuton extends LinearOpMode {
 
                 // If we don't see any tags
                 if (detected) {
-                    telemetry.addData("Status", "Already detected, stopping");
+                    telemetry.addData("Detection Status", "Already detected, stopping");
                 } else if (detections.size() == 0) {
                     numFramesWithoutDetection++;
+
+                    if (numFramesWithoutDetection == DETECTION_LIMIT) {
+                        telemetry.addData("Detection Status", "Detection Limit Reached, Going to Zone 2");
+                        encoderDrive(1,7.5,false,1000,true);
+                        detected = true;
+                        continue;
+                    }
 
                     // If we haven't seen a tag for a few frames, lower the decimation
                     // so we can hopefully pick one up if we're e.g. far back
@@ -255,15 +264,15 @@ public class FinalAuton extends LinearOpMode {
                             case 1: {
                                 grabConeRoutine();
                                 LServo.setPosition(0);
-                                encoderDrive(0.25, 6.5, true, 10000, true);
+                                encoderDrive(0.25, 7.5, true, 10000, true);
                                 encoderDrive(0.2, 13, false, 10000, true);
                                 LServo.setPosition(.0);
-                                encoderDrive(0.5, -3, true, 10000, true);
+                                encoderDrive(0.5, -4, true, 10000, true);
                                 encoderDrive(.5, 1, false, 1000, true);
 
 
                                 LiftPosSet(TopLift, 1, true);
-
+                                sleep(1000);
                                 LServo.setPosition(1);
                                 sleep(2000);
                                 PServo.setPosition(.5);
@@ -284,16 +293,17 @@ public class FinalAuton extends LinearOpMode {
                                 grabConeRoutine();
 
                                 LServo.setPosition(0);
-                                encoderDrive(0.25, 6.5, true, 10000, true);
+                                encoderDrive(0.25, 7.5, true, 10000, true);
                                 encoderDrive(0.2, 13, false, 10000, true);
                                 LServo.setPosition(.0);
-                                encoderDrive(0.5, -3.75, true, 10000, true);
+                                encoderDrive(0.5, -4.75, true, 10000, true);
                                 encoderDrive(.5, 1, false, 1000, true);
                                 LiftPosSet(250, 1, true);
-
+                                sleep(1000);
                                 LServo.setPosition(1);
                                 sleep(2000);
                                 PServo.setPosition(.5);
+
                                 sleep(2000);
                                 LServo.setPosition(0);
                                 sleep(200);
@@ -306,13 +316,13 @@ public class FinalAuton extends LinearOpMode {
                             case 3: {
                                 grabConeRoutine();
                                 LServo.setPosition(0);
-                                encoderDrive(0.25, 6.5, true, 10000, true);
+                                encoderDrive(0.25, 7.5, true, 10000, true);
                                 encoderDrive(0.2, 13, false, 10000, true);
                                 LServo.setPosition(.0);
-                                encoderDrive(0.5, -3.9, true, 10000, true);
+                                encoderDrive(0.5, -4.9, true, 10000, true);
                                 encoderDrive(.5, .75, false, 10000, true);
                                 LiftPosSet(225, 1,true);
-
+                                sleep(1000);
                                 LServo.setPosition(1);
                                 sleep(2000);
                                 PServo.setPosition(1);

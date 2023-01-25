@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.AutonTest;
+package org.firstinspires.ftc.teamcode.Autons;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -26,9 +26,9 @@ public class practiceauton extends LinearOpMode{
     private DcMotor BR = null;
 
     //encoders
-    static final double COUNTS_PER_MOTOR_REV = 1440 ;
+    static final double COUNTS_PER_MOTOR_REV = 384.5 ;
     static final double DRIVE_GEAR_REDUCTION = 1.0 ;
-    static final double WHEEL_DIAMETER_INCHES = 4.0 ;
+    static final double WHEEL_DIAMETER_INCHES = 3.5 ;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
 
