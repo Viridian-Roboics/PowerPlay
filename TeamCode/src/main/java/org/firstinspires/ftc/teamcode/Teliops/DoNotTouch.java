@@ -134,6 +134,7 @@ public class DoNotTouch extends LinearOpMode{
                 L1.setPower(0.0005);
             }
 
+            //lift presets
             if ((gamepad1.dpad_up || gamepad2.dpad_up) && L1.getCurrentPosition() != TopLift) {
                 LTarget = MoveLift(TopLift);
                 PickServo.setPosition(TopPick);
