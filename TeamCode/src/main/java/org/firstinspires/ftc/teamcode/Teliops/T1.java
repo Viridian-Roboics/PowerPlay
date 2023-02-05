@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Teliops;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -75,6 +76,8 @@ public class T1 extends LinearOpMode {
         BR.setDirection(DcMotor.Direction.FORWARD);
 
         L1.setDirection(DcMotor.Direction.REVERSE);
+        L1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         LMin = L1.getCurrentPosition();
         LMax = LMin + 4000;
@@ -122,13 +125,13 @@ public class T1 extends LinearOpMode {
             }
 
             //lift
-            if ((gamepad1.right_bumper || gamepad2.right_bumper) && (L1.getCurrentPosition() <= LMax || IgnoreLift)) {
+            if ((gamepad1.right_bumper || gamepad2.right_bumper) && (L1.getCurrentPosition() <= LMax)) {
                 RegMoveLift(1, "Going Up", ULspeed);
-            } else if ((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin || IgnoreLift)) {
+            } else if ((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin)) {
                 RegMoveLift(-1, "Going Down", DLspeed);
-            } else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
-                L1.setPower(0.005);
-            }
+            } //else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
+//                L1.setPower(0);
+//            }
 
             if ((gamepad1.dpad_up || gamepad2.dpad_up) && L1.getCurrentPosition() != TopLift) {
                 LTarget = MoveLift(TopLift);
@@ -143,13 +146,13 @@ public class T1 extends LinearOpMode {
                 LTarget = MoveLift(ConeLift);
             }
 
-            if (LTarget != 0) {
-                if (L1.getCurrentPosition() > LTarget) {
-                    L1.setPower(DLspeed);
-                } else {
-                    L1.setPower(ULspeed);
-                }
-            }
+//            if (LTarget != 0) {
+//                if (L1.getCurrentPosition() > LTarget) {
+//                    L1.setPower(DLspeed);
+//                } else {
+//                    L1.setPower(ULspeed);
+//                }
+//            }
 
             if ((gamepad1.a || gamepad2.a) && Lopen/* && LServo.getPosition() == BottomL*/) {
 //                    sleep(500);
@@ -182,6 +185,8 @@ public class T1 extends LinearOpMode {
                 MiddleLift = LMin + 2189;
                 TopLift = LMin + 2718;
                 ConeLift = LMin + 614;
+                L1.setPower(0);
+                L1.setTargetPosition(0);
             }
 
             FL.setPower(FLP);
@@ -208,7 +213,7 @@ public class T1 extends LinearOpMode {
     private void RegMoveLift(int down, String status, double speed) {
         LTarget = 0;
         L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        L1.setPower(speed * down);
+        L1.setPower(speed * -down);
         telemetry.addData("Status", status);
     }
 }
