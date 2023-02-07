@@ -469,6 +469,29 @@ public class FinalAuton extends LinearOpMode {
         headingOffset = getRawHeading();
         robotHeading = 0;
     }
+    public void holdHeading(double maxTurnSpeed, double heading, double holdTime) {
+
+        ElapsedTime holdTimer = new ElapsedTime();
+        holdTimer.reset();
+
+        // keep looping while we have time remaining.
+        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
+            // Determine required steering to keep on heading
+            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+
+            // Clip the speed to the maximum permitted value.
+            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
+
+            // Pivot in place by applying the turning correction
+            moveRobot(0, turnSpeed);
+
+
+        }
+
+        // Stop all motion;
+        moveRobot(0, 0);
+    }
+
 
     public void LiftPosSet(int LiftTo, double speed, boolean sleep) {
 

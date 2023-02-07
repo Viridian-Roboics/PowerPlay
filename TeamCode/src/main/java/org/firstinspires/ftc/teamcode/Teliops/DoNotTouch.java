@@ -1,16 +1,19 @@
 package org.firstinspires.ftc.teamcode.Teliops;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.Set;
 
 // input buttons leftover: x
 // lift1     lift2
-@TeleOp(name="Teliop One")
-public class T1 extends LinearOpMode{
+@TeleOp(name="Daniel_Teliop")
+public class DoNotTouch extends LinearOpMode{
     //general Vars
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -42,12 +45,12 @@ public class T1 extends LinearOpMode{
     private Servo PickServo = null;
     private boolean Pickopen = false;
     private boolean Lopen = false;
-        //picker drop
+    //picker drop
     private double TopPick = 0;
     private double BottomPick = 1;
-        //main grabber
-    private double TopL = .0;
-    private double BottomL = .3;
+    //main grabber
+    private double TopL = 0;
+    private double BottomL = .9;
     private int ClawBlock = 0;
     private int PickBlock = 0;
 
@@ -82,7 +85,6 @@ public class T1 extends LinearOpMode{
         MiddleLift = LMin + 2189;
         TopLift = LMin + 2718;
         ConeLift = LMin + 614;
-
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -124,14 +126,15 @@ public class T1 extends LinearOpMode{
             }
 
             //lift
-            if ((gamepad1.right_bumper || gamepad2.right_bumper) && (L1.getCurrentPosition() <= LMax )) {
+            if ((gamepad1.right_bumper || gamepad2.right_bumper)) {
                 RegMoveLift(1, "Going Up", ULspeed);
-            } else if((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin )) {
+            } else if((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin)) {
                 RegMoveLift(-1, "Going Down", DLspeed);
             } else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
-                L1.setPower(0.005);
+                L1.setPower(0.0005);
             }
 
+            //lift presets
             if ((gamepad1.dpad_up || gamepad2.dpad_up) && L1.getCurrentPosition() != TopLift) {
                 LTarget = MoveLift(TopLift);
                 PickServo.setPosition(TopPick);
@@ -152,52 +155,25 @@ public class T1 extends LinearOpMode{
             }
 
             //claw
-            //if something keeps being weird with claw
-            // if (gamepad1.a || gamepad2.a){
-            // Lservo.setPosition(TopL);
-            // }
-            //if (gamepad1.x || gamepad2.x){
-            // Lservo.setPosition(BottomL);
-            // }
-            //
-            //
-            //
-
-            if (ClawBlock == 0) {
-                if ((gamepad1.a || gamepad2.a) && Lopen) {
-//                    sleep(500);
-                    Lopen = false;
-                    LServo.setPosition(TopL);
-                } else if ((gamepad1.a || gamepad2.a) && !Lopen) {
-//                    sleep(500);
-                    Lopen = true;
-                    LServo.setPosition(BottomL);
-                }
-            } else if(ClawBlock >= 20000){
-                ClawBlock = 0;
-            } else{
-                ClawBlock += 1;
+            if ((gamepad1.a || gamepad2.a) && Lopen) {
+                Lopen = false;
+                LServo.setPosition(TopL);
+            } else if ((gamepad1.a || gamepad2.a) && !Lopen) {
+                Lopen = true;
+                LServo.setPosition(BottomL);
             }
 
             //pick lower
-            if (PickBlock == 0) {
-                if ((gamepad1.b || gamepad2.b) && Pickopen) {
-                    sleep(500);
-                    Pickopen = false;
-                    PickServo.setPosition(TopPick);
-                } else if ((gamepad1.b || gamepad2.b) && !Pickopen) {
-                    sleep(500);
-                    Pickopen = true;
-                    PickServo.setPosition(BottomPick);
-                }
-            } else if(PickBlock >= 20000){
-                PickBlock = 0;
-            } else{
-                PickBlock += 1;
+            if ((gamepad1.b || gamepad2.b) && Pickopen) {
+                Pickopen = false;
+                PickServo.setPosition(TopPick);
+            } else if ((gamepad1.b || gamepad2.b) && !Pickopen) {
+                Pickopen = true;
+                PickServo.setPosition(BottomPick);
             }
 
-            //fuck lift restrictions
-            if (gamepad1.y || gamepad2.y) {
+            //Reset lift restrictions
+            if (gamepad1.y || gamepad2.y){
                 LMin = L1.getCurrentPosition();
                 LMax = LMin + 4000;
                 BottomLift = LMin + 1379;

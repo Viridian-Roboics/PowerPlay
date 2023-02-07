@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode.Teliops;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
+
+        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+        import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+        import com.qualcomm.robotcore.hardware.DcMotor;
+        import com.qualcomm.robotcore.hardware.Servo;
+        import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 // input buttons leftover: x
 // lift1     lift2
-@TeleOp(name="Teliop One")
-public class T1 extends LinearOpMode{
+@TeleOp(name="mj")
+public class mjteliop extends LinearOpMode{
     //general Vars
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -42,11 +43,11 @@ public class T1 extends LinearOpMode{
     private Servo PickServo = null;
     private boolean Pickopen = false;
     private boolean Lopen = false;
-        //picker drop
+    //picker drop
     private double TopPick = 0;
     private double BottomPick = 1;
-        //main grabber
-    private double TopL = .0;
+    //main grabber
+    private double TopL = .1;
     private double BottomL = .3;
     private int ClawBlock = 0;
     private int PickBlock = 0;
@@ -77,7 +78,7 @@ public class T1 extends LinearOpMode{
         L1.setDirection(DcMotor.Direction.REVERSE);
 
         LMin = L1.getCurrentPosition();
-        LMax = LMin + 4000;
+        LMax = LMin + 3300;
         BottomLift = LMin + 1379;
         MiddleLift = LMin + 2189;
         TopLift = LMin + 2718;
@@ -124,12 +125,23 @@ public class T1 extends LinearOpMode{
             }
 
             //lift
-            if ((gamepad1.right_bumper || gamepad2.right_bumper) && (L1.getCurrentPosition() <= LMax )) {
+            if ((gamepad1.right_bumper || gamepad2.right_bumper) && (L1.getCurrentPosition() <= LMax)) {
                 RegMoveLift(1, "Going Up", ULspeed);
-            } else if((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin )) {
+            } else if((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin)) {
                 RegMoveLift(-1, "Going Down", DLspeed);
             } else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
-                L1.setPower(0.005);
+                L1.setPower(0.00);
+            }
+//            } else if  (L1.getCurrentPosition() == LMax){
+//                L1.setPower(00);
+//            } else if(L1.getCurrentPosition() == LMin){
+//                L1.setPower(0);
+//            }
+                else if (gamepad1.right_bumper ==false || gamepad2.right_bumper == false){
+                L1.setPower(0);
+            }
+                else if (gamepad2.left_bumper == false || gamepad2.left_bumper == false){
+                    L1.setPower(0);
             }
 
             if ((gamepad1.dpad_up || gamepad2.dpad_up) && L1.getCurrentPosition() != TopLift) {
@@ -196,15 +208,12 @@ public class T1 extends LinearOpMode{
                 PickBlock += 1;
             }
 
-            //fuck lift restrictions
-            if (gamepad1.y || gamepad2.y) {
-                LMin = L1.getCurrentPosition();
-                LMax = LMin + 4000;
-                BottomLift = LMin + 1379;
-                MiddleLift = LMin + 2189;
-                TopLift = LMin + 2718;
-                ConeLift = LMin + 614;
+
+            if ((gamepad1.x || gamepad2.x) ){
+                L1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
+
+
 
             FL.setPower(FLP);
             FR.setPower(FRP);
