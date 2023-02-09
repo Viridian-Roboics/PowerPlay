@@ -41,13 +41,14 @@ public class mjteliop extends LinearOpMode{
     //servo Vars
     private Servo LServo = null;
     private Servo PickServo = null;
+    private Servo clawservo2 = null;
     private boolean Pickopen = false;
     private boolean Lopen = false;
     //picker drop
     private double TopPick = 0;
     private double BottomPick = 1;
     //main grabber
-    private double TopL = .1;
+    private double TopL = 0;
     private double BottomL = .3;
     private int ClawBlock = 0;
     private int PickBlock = 0;
@@ -61,6 +62,7 @@ public class mjteliop extends LinearOpMode{
         L1 = hardwareMap.get(DcMotor.class, "lift1");
         LServo = hardwareMap.get(Servo.class, "LServo");
         PickServo = hardwareMap.get(Servo.class, "PickServo");
+        clawservo2 = hardwareMap.get(Servo.class, "clawservo2");
 
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -180,6 +182,7 @@ public class mjteliop extends LinearOpMode{
 //                    sleep(500);
                     Lopen = false;
                     LServo.setPosition(TopL);
+
                 } else if ((gamepad1.a || gamepad2.a) && !Lopen) {
 //                    sleep(500);
                     Lopen = true;
@@ -197,10 +200,12 @@ public class mjteliop extends LinearOpMode{
                     sleep(500);
                     Pickopen = false;
                     PickServo.setPosition(TopPick);
+                    clawservo2.setPosition(TopPick);
                 } else if ((gamepad1.b || gamepad2.b) && !Pickopen) {
                     sleep(500);
                     Pickopen = true;
                     PickServo.setPosition(BottomPick);
+                    clawservo2.setPosition(BottomPick);
                 }
             } else if(PickBlock >= 20000){
                 PickBlock = 0;
