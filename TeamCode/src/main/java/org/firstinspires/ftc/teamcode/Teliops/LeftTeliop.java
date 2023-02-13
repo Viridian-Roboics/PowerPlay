@@ -10,9 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 // input buttons leftover: x
 // lift1     lift2
-@TeleOp(name = "mj")
-public class mjteliop extends LinearOpMode {
-
+@TeleOp(name = "LeftTeliop")
+public class LeftTeliop extends LinearOpMode {
     static final double COUNTS_PER_MOTOR_REV = 1440;
     static final double DRIVE_GEAR_REDUCTION = 1.0;
     static final double WHEEL_DIAMETER_INCHES = 4.0;
@@ -64,6 +63,7 @@ public class mjteliop extends LinearOpMode {
     final double moveSpeed = 0.25;
     final int moveForwardDist = 6;
     final int directionalOffset = 4;
+    final int moveSpeedMultiplier = 2;
 
     @Override
     public void runOpMode() {
@@ -225,14 +225,8 @@ public class mjteliop extends LinearOpMode {
             if ((gamepad1.x || gamepad2.x)) {
                 L1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
-            if (gamepad1.left_trigger > 0.8 || gamepad2.right_trigger > 0.8) {
+            if (gamepad1.y || gamepad2.y) {
                 if (turned) {
-                    MoveLift(BottomLift);
-
-                    ClawServo.setPosition(TopPick);
-                    PickServo.setPosition(TopPick);
-                    Pickopen = true;
-
                     turnDegrees(90);
                     turned = false;
                 } else {
@@ -241,20 +235,14 @@ public class mjteliop extends LinearOpMode {
                 }
                 sleep(500);
             }
-            if (gamepad1.y || gamepad2.y) {
+            if (gamepad1.left_trigger > 0.8 || gamepad2.right_trigger > 0.8) {
                 if (!moved) {
-                    MoveLift(MiddleLift);
-
-                    ClawServo.setPosition(TopPick);
-                    PickServo.setPosition(TopPick);
-                    Pickopen = true;
-
-                    encoderDrive(moveSpeed, moveForwardDist, false, 10000, true);
-                    encoderDrive(moveSpeed, directionalOffset, true, 10000, true);
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, moveForwardDist, false, 10000, true);
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, directionalOffset, true, 10000, true);
                     moved = true;
                 } else {
-                    encoderDrive(moveSpeed, -directionalOffset, true, 10000, true);
-                    encoderDrive(moveSpeed, -moveForwardDist, false, 10000, true);
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, -directionalOffset, true, 10000, true);
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, -moveForwardDist, false, 10000, true);
                     moved = false;
                 }
             }
@@ -299,10 +287,10 @@ public class mjteliop extends LinearOpMode {
         BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         runtime.reset();
-        FL.setPower(Math.abs(moveSpeed));
-        FR.setPower(Math.abs(moveSpeed));
-        BL.setPower(Math.abs(moveSpeed));
-        BR.setPower(Math.abs(moveSpeed));
+        FL.setPower(Math.abs(moveSpeed*moveSpeedMultiplier));
+        FR.setPower(Math.abs(moveSpeed*moveSpeedMultiplier));
+        BL.setPower(Math.abs(moveSpeed*moveSpeedMultiplier));
+        BR.setPower(Math.abs(moveSpeed*moveSpeedMultiplier));
 
         while (opModeIsActive() && (runtime.seconds() < 10000) && (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
             telemetry.addData("Running to", " %7d", newMoveTarget);
