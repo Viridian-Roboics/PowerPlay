@@ -81,6 +81,7 @@ public class Practicebutupdated extends LinearOpMode {
     //servo Vars
     private Servo LServo = null;
     private Servo PServo = null;
+    private Servo clawservo2 = null;
 
     //lift Vars
     private DcMotor L1 = null;
@@ -166,6 +167,7 @@ public class Practicebutupdated extends LinearOpMode {
         L1 = hardwareMap.get(DcMotor.class, "lift1");
         LServo = hardwareMap.get(Servo.class, "LServo");
         PServo = hardwareMap.get(Servo.class, "PickServo");
+        clawservo2 = hardwareMap.get(Servo.class, "clawservo2");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.FORWARD);
@@ -256,7 +258,7 @@ public class Practicebutupdated extends LinearOpMode {
 
                                LServo.setPosition(0);
                                encoderDrive(0.25, 13.334, true, 10000, true);
-                               encoderDrive(0.2, 26.667, false, 10000, true);
+                               encoderDrive(0.2, 13.334, false, 10000, true);
                                LServo.setPosition(.0);
                                encoderDrive(0.5, -6.667, true, 10000, true);
                                encoderDrive(.5, 1.667, false, 1000, true);
@@ -265,12 +267,13 @@ public class Practicebutupdated extends LinearOpMode {
                                LServo.setPosition(1);
                                sleep(2000);
                                PServo.setPosition(.5);
+                               clawservo2.setPosition(.5);
                                sleep(2000);
                                LServo.setPosition(0);
                                sleep(200);
 
-                               encoderDrive(.5, -2.788, true, 10000, true);
-                               encoderDrive(.5,-13.336,false, 1000, true);
+                               //encoderDrive(.5, -2.788, true, 10000, true);
+                               //encoderDrive(.5,-13.336,false, 1000, true);
                                encoderDrive(.5, -11.944,true,1000,true);
                                LiftPosSet(ConeLift, 1,1000, true);
                                encoderDrive(.5,.001,false,10000,true);
@@ -285,7 +288,7 @@ public class Practicebutupdated extends LinearOpMode {
 
                                 LServo.setPosition(0);
                                 encoderDrive(0.25, 13.334, true, 10000, true);
-                                encoderDrive(0.2, 26.667, false, 10000, true);
+                                encoderDrive(0.2, 13.334, false, 10000, true);
                                 LServo.setPosition(.0);
                                 encoderDrive(0.5, -6.667, true, 10000, true);
                                 encoderDrive(.5, 1.667, false, 1000, true);
@@ -294,6 +297,7 @@ public class Practicebutupdated extends LinearOpMode {
                                 LServo.setPosition(1);
                                 sleep(2000);
                                 PServo.setPosition(.5);
+                                clawservo2.setPosition(.5);
                                 sleep(2000);
                                 LServo.setPosition(0);
                                 sleep(200);
@@ -307,7 +311,7 @@ public class Practicebutupdated extends LinearOpMode {
                                 grabConeRoutine();
                                 LServo.setPosition(0);
                                 encoderDrive(0.25, 13.334, true, 10000, true);
-                                encoderDrive(0.2, 26.667, false, 10000, true);
+                                encoderDrive(0.2, 13.334, false, 10000, true);
                                 LServo.setPosition(.0);
                                 encoderDrive(0.5, -6.667, true, 10000, true);
                                 encoderDrive(.5, 1.667, false, 1000, true);
@@ -316,6 +320,7 @@ public class Practicebutupdated extends LinearOpMode {
                                 LServo.setPosition(1);
                                 sleep(2000);
                                 PServo.setPosition(.5);
+                                clawservo2.setPosition(.5);
                                 sleep(2000);
                                 LServo.setPosition(0);
                                 sleep(200);
