@@ -208,12 +208,12 @@ public class LeftTeliop extends LinearOpMode {
                     sleep(500);
                     Pickopen = false;
                     PickServo.setPosition(TopPick);
-                    ClawServo.setPosition(TopPick);
+                    ClawServo.setPosition(BottomPick);
                 } else if ((gamepad1.b || gamepad2.b) && !Pickopen) {
                     sleep(500);
                     Pickopen = true;
                     PickServo.setPosition(BottomPick);
-                    ClawServo.setPosition(BottomPick);
+                    ClawServo.setPosition(TopPick);
                 }
             } else if (PickBlock >= 20000) {
                 PickBlock = 0;
@@ -228,9 +228,11 @@ public class LeftTeliop extends LinearOpMode {
             if (gamepad1.y || gamepad2.y) {
                 if (turned) {
                     turnDegrees(90);
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, -moveForwardDist, false, 10000, false);
                     turned = false;
                 } else {
                     turnDegrees(-90);
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, moveForwardDist, false, 10000, false);
                     turned = true;
                 }
                 sleep(500);
