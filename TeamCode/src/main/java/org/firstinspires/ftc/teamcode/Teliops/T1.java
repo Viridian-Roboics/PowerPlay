@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Teliops;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,8 +10,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 // input buttons leftover: x
 // lift1     lift2
-@TeleOp(name = "Teliop One")
+@TeleOp(name = "T1")
 public class T1 extends LinearOpMode {
+    static final double COUNTS_PER_MOTOR_REV = 1440;
+    static final double DRIVE_GEAR_REDUCTION = 1.0;
+    static final double WHEEL_DIAMETER_INCHES = 4.0;
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     //general Vars
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -40,16 +45,27 @@ public class T1 extends LinearOpMode {
     //servo Vars
     private Servo LServo = null;
     private Servo PickServo = null;
+    private Servo ClawServo = null;
     private boolean Pickopen = false;
     private boolean Lopen = false;
+
     //picker drop
     private double TopPick = 0;
     private double BottomPick = 1;
+
     //main grabber
-    private double TopL = 0;
+    private double TopL = .1;
     private double BottomL = .3;
     private int ClawBlock = 0;
     private int PickBlock = 0;
+
+    private boolean moved = false;
+    private boolean turned = false;
+
+    final double moveSpeed = 0.25;
+    final int moveForwardDist = 6;
+    final int directionalOffset = 4;
+    final int moveSpeedMultiplier = 2;
 
     @Override
     public void runOpMode() {
@@ -60,6 +76,7 @@ public class T1 extends LinearOpMode {
         L1 = hardwareMap.get(DcMotor.class, "lift1");
         LServo = hardwareMap.get(Servo.class, "LServo");
         PickServo = hardwareMap.get(Servo.class, "PickServo");
+        ClawServo = hardwareMap.get(Servo.class, "clawservo2");
 
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -77,7 +94,7 @@ public class T1 extends LinearOpMode {
         L1.setDirection(DcMotor.Direction.REVERSE);
 
         LMin = L1.getCurrentPosition();
-        LMax = LMin + 4000;
+        LMax = LMin + 3300;
         BottomLift = LMin + 1379;
         MiddleLift = LMin + 2189;
         TopLift = LMin + 2718;
@@ -107,9 +124,9 @@ public class T1 extends LinearOpMode {
             max = Math.max(max, Math.abs(BRP));
 
             if (gamepad1.right_trigger > .25 || gamepad2.right_trigger > .25) {
-                CAP = .25;
-            } else if (gamepad1.left_trigger > .25 || gamepad2.left_trigger > .25) {
                 CAP = 1;
+            } else if (gamepad1.left_trigger > .25 || gamepad2.left_trigger > .25) {
+                CAP = .25;
             } else {
                 CAP = .5;
             }
@@ -122,12 +139,16 @@ public class T1 extends LinearOpMode {
             }
 
             //lift
-            if ((gamepad1.right_bumper || gamepad2.right_bumper) && (L1.getCurrentPosition() <= LMax || IgnoreLift)) {
+            if ((gamepad1.right_bumper || gamepad2.right_bumper) && (L1.getCurrentPosition() <= LMax)) {
                 RegMoveLift(1, "Going Up", ULspeed);
-            } else if ((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin || IgnoreLift)) {
+            } else if ((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin)) {
                 RegMoveLift(-1, "Going Down", DLspeed);
             } else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
-                L1.setPower(0.005);
+                L1.setPower(0.00);
+            } else if (gamepad1.right_bumper == false || gamepad2.right_bumper == false) {
+                L1.setPower(0);
+            } else if (gamepad2.left_bumper == false || gamepad2.left_bumper == false) {
+                L1.setPower(0);
             }
 
             if ((gamepad1.dpad_up || gamepad2.dpad_up) && L1.getCurrentPosition() != TopLift) {
@@ -138,8 +159,6 @@ public class T1 extends LinearOpMode {
             } else if ((gamepad1.dpad_down || gamepad2.dpad_down) && L1.getCurrentPosition() != BottomLift) {
                 LTarget = MoveLift(BottomLift);
             } else if ((gamepad1.dpad_right || gamepad2.dpad_right) && L1.getCurrentPosition() != ConeLift) {
-                PickServo.setPosition(BottomPick);
-                Pickopen = true;
                 LTarget = MoveLift(ConeLift);
             }
 
@@ -151,38 +170,73 @@ public class T1 extends LinearOpMode {
                 }
             }
 
-            if ((gamepad1.a || gamepad2.a) && Lopen/* && LServo.getPosition() == BottomL*/) {
+            if (ClawBlock == 0) {
+                if ((gamepad1.a || gamepad2.a) && Lopen) {
 //                    sleep(500);
-                Lopen = false;
-                LServo.setPosition(TopL);
-                telemetry.addData("Jaw Status: ", "Closing");
-            } else if ((gamepad1.a || gamepad2.a) && !Lopen/* && LServo.getPosition() == TopL*/) {
+                    Lopen = false;
+                    LServo.setPosition(TopL);
+                } else if ((gamepad1.a || gamepad2.a) && !Lopen) {
 //                    sleep(500);
-                Lopen = true;
-                LServo.setPosition(BottomL);
-                telemetry.addData("Jaw Status: ", "Opening");
+                    Lopen = true;
+                    LServo.setPosition(BottomL);
+                }
+            } else if (ClawBlock >= 20000) {
+                ClawBlock = 0;
+            } else {
+                ClawBlock += 1;
             }
 
             //pick lower
-            if ((gamepad1.b || gamepad2.b) && Pickopen) {
-                sleep(500);
-                Pickopen = false;
-                PickServo.setPosition(TopPick);
-            } else if ((gamepad1.b || gamepad2.b) && !Pickopen) {
-                sleep(500);
-                Pickopen = true;
-                PickServo.setPosition(BottomPick);
+            if (PickBlock == 0) {
+                if ((gamepad1.b || gamepad2.b) && Pickopen) {
+                    sleep(500);
+                    Pickopen = false;
+                    PickServo.setPosition(TopPick);
+                    ClawServo.setPosition(BottomPick);
+                } else if ((gamepad1.b || gamepad2.b) && !Pickopen) {
+                    sleep(500);
+                    Pickopen = true;
+                    PickServo.setPosition(BottomPick);
+                    ClawServo.setPosition(TopPick);
+                }
+            } else if (PickBlock >= 20000) {
+                PickBlock = 0;
+            } else {
+                PickBlock += 1;
             }
 
-//            //fuck lift restrictions
-            if (gamepad1.y || gamepad2.y) {
+            if (gamepad2.y){
                 LMin = L1.getCurrentPosition();
-                LMax = LMin + 4000;
+                LMax = LMin + 3300;
                 BottomLift = LMin + 1379;
                 MiddleLift = LMin + 2189;
                 TopLift = LMin + 2718;
                 ConeLift = LMin + 614;
             }
+
+            if (gamepad1.y) {
+                if (turned) {
+                    turnDegrees(90);
+                    turned = false;
+                } else {
+                    turnDegrees(-90);
+                    turned = true;
+                }
+                sleep(500);
+            }
+
+            if (gamepad1.x){
+                if (!moved) {
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, moveForwardDist, false, 10000, true);
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, directionalOffset, true, 10000, true);
+                    moved = true;
+                } else {
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, -directionalOffset, true, 10000, true);
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, -moveForwardDist, false, 10000, true);
+                    moved = false;
+                }
+            }
+
 
             FL.setPower(FLP);
             FR.setPower(FRP);
@@ -198,11 +252,129 @@ public class T1 extends LinearOpMode {
         }
     }
 
+    void turnDegrees(int degrees) {
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int degreeRatio = (int) 1000.0 / 120;
+        int newMoveTarget = FL.getCurrentPosition() + (degreeRatio * degrees);
+
+        FL.setTargetPosition(-newMoveTarget);
+        FR.setTargetPosition(newMoveTarget);
+        BL.setTargetPosition(-newMoveTarget);
+        BR.setTargetPosition(newMoveTarget);
+
+        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        runtime.reset();
+        FL.setPower(Math.abs(moveSpeed*moveSpeedMultiplier));
+        FR.setPower(Math.abs(moveSpeed*moveSpeedMultiplier));
+        BL.setPower(Math.abs(moveSpeed*moveSpeedMultiplier));
+        BR.setPower(Math.abs(moveSpeed*moveSpeedMultiplier));
+
+        while (opModeIsActive() && (runtime.seconds() < 10000) && (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
+            telemetry.addData("Running to", " %7d", newMoveTarget);
+            telemetry.addData("Currently at", " at %7d :%7d :%7d :%7d", FL.getCurrentPosition(), FR.getCurrentPosition(), BL.getCurrentPosition(), BR.getCurrentPosition());
+            telemetry.update();
+        }
+
+        FL.setPower(0);
+        FR.setPower(0);
+        BL.setPower(0);
+        BR.setPower(0);
+
+        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     private int MoveLift(int GoalPos) {
         L1.setTargetPosition(GoalPos);
         L1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         L1.setTargetPosition(GoalPos);
         return GoalPos;
+    }
+
+    public void encoderDrive(double speed, double MoveIN, boolean strafe, double timeoutS, boolean sleep) {
+        int newMoveTarget;
+
+        if (opModeIsActive()) {
+            runtime.reset();
+            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            newMoveTarget = FL.getCurrentPosition() + (int) (MoveIN * COUNTS_PER_INCH);
+            if (!strafe) {
+                FL.setTargetPosition(newMoveTarget);
+                FR.setTargetPosition(newMoveTarget);
+                BL.setTargetPosition(newMoveTarget);
+                BR.setTargetPosition(newMoveTarget);
+
+                FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                runtime.reset();
+                FL.setPower(Math.abs(speed));
+                FR.setPower(Math.abs(speed));
+                BL.setPower(Math.abs(speed));
+                BR.setPower(Math.abs(speed));
+            } else {
+                FL.setTargetPosition(newMoveTarget);
+                FR.setTargetPosition(-newMoveTarget);
+                BL.setTargetPosition(-newMoveTarget);
+                BR.setTargetPosition(newMoveTarget);
+
+                FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                runtime.reset();
+                FL.setPower(Math.abs(speed));
+                FR.setPower(Math.abs(speed));
+                BL.setPower(Math.abs(speed));
+                BR.setPower(Math.abs(speed));
+            }
+
+            while (opModeIsActive() && (runtime.seconds() < timeoutS) && (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
+                telemetry.addData("Running to", " %7d", newMoveTarget);
+                telemetry.addData("Currently at", " at %7d :%7d :%7d :%7d", FL.getCurrentPosition(), FR.getCurrentPosition(), BL.getCurrentPosition(), BR.getCurrentPosition());
+                telemetry.update();
+            }
+
+            FL.setPower(0);
+            FR.setPower(0);
+            BL.setPower(0);
+            BR.setPower(0);
+
+            FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            if (sleep) {
+                sleep(100);
+            }
+        }
     }
 
     private void RegMoveLift(int down, String status, double speed) {
