@@ -227,12 +227,12 @@ public class LeftTeliop extends LinearOpMode {
             }
             if (gamepad1.y || gamepad2.y) {
                 if (turned) {
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, -moveForwardDist*0.5, false, 10000, false);
                     turnDegrees(90);
-                    encoderDrive(moveSpeed*moveSpeedMultiplier, -moveForwardDist, false, 10000, false);
                     turned = false;
                 } else {
                     turnDegrees(-90);
-                    encoderDrive(moveSpeed*moveSpeedMultiplier, moveForwardDist, false, 10000, false);
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, moveForwardDist*0.5, false, 10000, false);
                     turned = true;
                 }
                 sleep(500);
