@@ -13,16 +13,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.Testing.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 
-@Autonomous(name = "testing out some stuff", group = "Robot")
-public class Practicebutupdated extends LinearOpMode {
+@Autonomous(name = "Complex Auton", group = "Robot")
+public class ActualAuton extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -53,17 +53,17 @@ public class Practicebutupdated extends LinearOpMode {
     private DcMotor BR = null;
 
     //encoders
-    static final double COUNTS_PER_MOTOR_REV = 384.5;
-    static final double DRIVE_GEAR_REDUCTION = 1.0;
-    static final double WHEEL_DIAMETER_INCHES = 3.5;
+    static final double COUNTS_PER_MOTOR_REV = 1440 ;
+    static final double DRIVE_GEAR_REDUCTION = 1.0 ;
+    static final double WHEEL_DIAMETER_INCHES = 4.0 ;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
 
     //gry
     private BNO055IMU imu = null;
-    private double robotHeading = 0;
+    private double robotHeading  = 0;
     private double headingOffset = 0;
-    private double headingError = 0;
+    private double headingError  = 0;
 
     private double targetHeading = 0;
     private double driveSpeed = 0;
@@ -80,7 +80,6 @@ public class Practicebutupdated extends LinearOpMode {
 
     //servo Vars
     private Servo LServo = null;
-    private Servo PServo = null;
 
     //lift Vars
     private DcMotor L1 = null;
@@ -99,8 +98,12 @@ public class Practicebutupdated extends LinearOpMode {
     int detectedZone = -1;
 
     void grabConeRoutine() {
-        encoderDrive(1,1,false,1000,true);
+        /* Basic (Untested) Routine */
 
+        encoderDrive(0.5, 6, true, 10000, true);
+        encoderDrive(0.5, 13, false, 10000, true);
+        encoderDrive(0.5, -4, true, 10000, true);
+        LiftPosSet(300,.5);
     }
 
     void turnDegrees(int degrees) {
@@ -135,7 +138,7 @@ public class Practicebutupdated extends LinearOpMode {
 
         while (opModeIsActive() && (runtime.seconds() < 10000) && (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
             telemetry.addData("Running to", " %7d", newMoveTarget);
-            telemetry.addData("Currently at", " at %7d :%7d :%7d :%7d", FL.getCurrentPosition(), FR.getCurrentPosition(), BL.getCurrentPosition(), BR.getCurrentPosition());
+            telemetry.addData("Currently at",  " at %7d :%7d :%7d :%7d", FL.getCurrentPosition(), FR.getCurrentPosition(), BL.getCurrentPosition(), BR.getCurrentPosition());
             telemetry.update();
         }
 
@@ -165,7 +168,6 @@ public class Practicebutupdated extends LinearOpMode {
         BR = hardwareMap.get(DcMotor.class, "BR");
         L1 = hardwareMap.get(DcMotor.class, "lift1");
         LServo = hardwareMap.get(Servo.class, "LServo");
-        PServo = hardwareMap.get(Servo.class, "PickServo");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.FORWARD);
@@ -189,6 +191,7 @@ public class Practicebutupdated extends LinearOpMode {
         FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
 
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -225,7 +228,8 @@ public class Practicebutupdated extends LinearOpMode {
                 // If we don't see any tags
                 if (detected) {
                     telemetry.addData("Status", "Already detected, stopping");
-                } else if (detections.size() == 0) {
+                }
+                else if (detections.size() == 0) {
                     numFramesWithoutDetection++;
 
                     // If we haven't seen a tag for a few frames, lower the decimation
@@ -238,7 +242,9 @@ public class Practicebutupdated extends LinearOpMode {
                 else {
                     numFramesWithoutDetection = 0;
 
-                    // If the target is within 1 meter, turn on high decimation get(0).pose.z < THRESHOLD_HIGH_DECIMATION_RANGE_METERS) {
+                    // If the target is within 1 meter, turn on high decimation to
+                    // increase the frame rate
+                    if (detections.get(0).pose.z < THRESHOLD_HIGH_DECIMATION_RANGE_METERS) {
                         aprilTagDetectionPipeline.setDecimation(DECIMATION_HIGH);
                     }
 
@@ -251,80 +257,26 @@ public class Practicebutupdated extends LinearOpMode {
 
                         // ignore warnings, they'll disappear when you add motor movement
                         switch (detectedId) {
-                           case 1: {
+                            case 1: {
                                 grabConeRoutine();
-
-                               LServo.setPosition(0);
-                               encoderDrive(0.25, 13.334, true, 10000, true);
-                               encoderDrive(0.2, 26.667, false, 10000, true);
-                               LServo.setPosition(.0);
-                               encoderDrive(0.5, -6.667, true, 10000, true);
-                               encoderDrive(.5, 1.667, false, 1000, true);
-                               LiftPosSet(250, 1, 1000, true);
-
-                               LServo.setPosition(1);
-                               sleep(2000);
-                               PServo.setPosition(.5);
-                               sleep(2000);
-                               LServo.setPosition(0);
-                               sleep(200);
-
-                               encoderDrive(.5, -2.788, true, 10000, true);
-                               encoderDrive(.5,-13.336,false, 1000, true);
-                               encoderDrive(.5, -11.944,true,1000,true);
-                               LiftPosSet(ConeLift, 1,1000, true);
-                               encoderDrive(.5,.001,false,10000,true);
-
-
-
+                                //encoderDrive(moveSpeed, moveForwardDist, false, 1000, true);
+                                //encoderDrive(moveSpeed, -directionalOffset,true, 1000, true);
                                 // case 1
                                 break;
                             }
                             case 2: {
                                 grabConeRoutine();
-
-                                LServo.setPosition(0);
-                                encoderDrive(0.25, 13.334, true, 10000, true);
-                                encoderDrive(0.2, 26.667, false, 10000, true);
-                                LServo.setPosition(.0);
-                                encoderDrive(0.5, -6.667, true, 10000, true);
-                                encoderDrive(.5, 1.667, false, 1000, true);
-                                LiftPosSet(250, 1, 1000, true);
-
-                                LServo.setPosition(1);
-                                sleep(2000);
-                                PServo.setPosition(.5);
-                                sleep(2000);
-                                LServo.setPosition(0);
-                                sleep(200);
-
-                                encoderDrive(.5, -2.778, true, 10000, true);
-                                LiftPosSet(ConeLift, 1,1000, true);
-                                encoderDrive(.5,.001,false,10000,true);
+                                //encoderDrive(moveSpeed, moveForwardDist, false, 10000, true);
+                                // case 2
                                 break;
                             }
                             case 3: {
                                 grabConeRoutine();
-                                LServo.setPosition(0);
-                                encoderDrive(0.25, 13.334, true, 10000, true);
-                                encoderDrive(0.2, 26.667, false, 10000, true);
-                                LServo.setPosition(.0);
-                                encoderDrive(0.5, -6.667, true, 10000, true);
-                                encoderDrive(.5, 1.667, false, 1000, true);
-                                LiftPosSet(250, 1, 1000, true);
-
-                                LServo.setPosition(1);
-                                sleep(2000);
-                                PServo.setPosition(.5);
-                                sleep(2000);
-                                LServo.setPosition(0);
-                                sleep(200);
-                                encoderDrive(.5, 2.778, true, 10000, true);
-                                LiftPosSet(ConeLift, 1,1000,true);
-                                encoderDrive(.5,.001,false,10000,true);
+                            //encoderDrive(moveSpeed, moveForwardDist, false, 10000, true);
+                                //encoderDrive(moveSpeed, directionalOffset, true, 10000, true);
+                                // case 3
                                 break;
                             }
-
                         }
                     }
                 }
@@ -334,7 +286,7 @@ public class Practicebutupdated extends LinearOpMode {
 
             sleep(20);
         }
-
+    }
 
     public void encoderDrive(double speed, double MoveIN, boolean strafe, double timeoutS, boolean sleep) {
         int newMoveTarget;
@@ -350,8 +302,8 @@ public class Practicebutupdated extends LinearOpMode {
             FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            newMoveTarget = FL.getCurrentPosition() + (int) (MoveIN * COUNTS_PER_INCH);
-            if (!strafe) {
+            newMoveTarget = FL.getCurrentPosition() + (int)(MoveIN * COUNTS_PER_INCH);
+            if (!strafe){
                 FL.setTargetPosition(newMoveTarget);
                 FR.setTargetPosition(newMoveTarget);
                 BL.setTargetPosition(newMoveTarget);
@@ -367,7 +319,8 @@ public class Practicebutupdated extends LinearOpMode {
                 FR.setPower(Math.abs(speed));
                 BL.setPower(Math.abs(speed));
                 BR.setPower(Math.abs(speed));
-            } else {
+            }
+            else{
                 FL.setTargetPosition(newMoveTarget);
                 FR.setTargetPosition(-newMoveTarget);
                 BL.setTargetPosition(-newMoveTarget);
@@ -387,7 +340,7 @@ public class Practicebutupdated extends LinearOpMode {
 
             while (opModeIsActive() && (runtime.seconds() < timeoutS) && (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
                 telemetry.addData("Running to", " %7d", newMoveTarget);
-                telemetry.addData("Currently at", " at %7d :%7d :%7d :%7d", FL.getCurrentPosition(), FR.getCurrentPosition(), BL.getCurrentPosition(), BR.getCurrentPosition());
+                telemetry.addData("Currently at",  " at %7d :%7d :%7d :%7d", FL.getCurrentPosition(), FR.getCurrentPosition(), BL.getCurrentPosition(), BR.getCurrentPosition());
                 telemetry.update();
             }
 
@@ -421,13 +374,14 @@ public class Practicebutupdated extends LinearOpMode {
 
     public void moveRobot(double drive, double turn) {
         driveSpeed = drive;
-        turnSpeed = turn;
+        turnSpeed  = turn;
 
-        leftSpeed = drive - turn;
+        leftSpeed  = drive - turn;
         rightSpeed = drive + turn;
 
         double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-        if (max > 1.0) {
+        if (max > 1.0)
+        {
             leftSpeed /= max;
             rightSpeed /= max;
         }
@@ -443,7 +397,7 @@ public class Practicebutupdated extends LinearOpMode {
         robotHeading = getRawHeading() - headingOffset;
         headingError = targetHeading - robotHeading;
 
-        while (headingError > 180) headingError -= 360;
+        while (headingError > 180)  headingError -= 360;
         while (headingError <= -180) headingError += 360;
 
         return Range.clip(headingError * proportionalGain, -1, 1);
@@ -459,31 +413,13 @@ public class Practicebutupdated extends LinearOpMode {
         robotHeading = 0;
     }
 
-    public void LiftPosSet(int LiftTo, double speed, double timeoutS, boolean sleep ) {
+    public void LiftPosSet(int LiftTo, double speed){
 
-        L1.setTargetPosition(LiftTo);
-
-   //     runtime.reset();
-        L1.setPower(Math.abs(speed));
-
-
-
-
-
-        if (sleep) {
-            sleep(1000);
-
+            L1.setTargetPosition(LiftTo);
+            L1.setPower(1);
+            runtime.reset();
+            L1.setPower(Math.abs(speed));
         }
-        if(L1.getCurrentPosition() == LiftTo);{
-            L1.setPower(0.05);
-
-
-
-        }
-
-
-    }
-
 
 }
 

@@ -3,15 +3,14 @@ package org.firstinspires.ftc.teamcode.Teliops;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 // input buttons leftover: x
 // lift1     lift2
-@TeleOp(name = "Teliop One")
-public class T1 extends LinearOpMode {
+@TeleOp(name="Teliop One")
+public class T1 extends LinearOpMode{
     //general Vars
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -43,11 +42,11 @@ public class T1 extends LinearOpMode {
     private Servo PickServo = null;
     private boolean Pickopen = false;
     private boolean Lopen = false;
-    //picker drop
+        //picker drop
     private double TopPick = 0;
     private double BottomPick = 1;
-    //main grabber
-    private double TopL = 0;
+        //main grabber
+    private double TopL = .0;
     private double BottomL = .3;
     private int ClawBlock = 0;
     private int PickBlock = 0;
@@ -76,8 +75,6 @@ public class T1 extends LinearOpMode {
         BR.setDirection(DcMotor.Direction.FORWARD);
 
         L1.setDirection(DcMotor.Direction.REVERSE);
-        L1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         LMin = L1.getCurrentPosition();
         LMax = LMin + 4000;
@@ -109,11 +106,13 @@ public class T1 extends LinearOpMode {
             max = Math.max(max, Math.abs(BLP));
             max = Math.max(max, Math.abs(BRP));
 
-            if (gamepad1.right_trigger > .25 || gamepad2.right_trigger > .25) {
+            if (gamepad1.right_trigger > .25 || gamepad2.right_trigger > .25){
                 CAP = .25;
-            } else if (gamepad1.left_trigger > .25 || gamepad2.left_trigger > .25) {
+            }
+            else if (gamepad1.left_trigger > .25 || gamepad2.left_trigger > .25){
                 CAP = 1;
-            } else {
+            }
+            else{
                 CAP = .5;
             }
 
@@ -125,59 +124,79 @@ public class T1 extends LinearOpMode {
             }
 
             //lift
-            if ((gamepad1.right_bumper || gamepad2.right_bumper) && (L1.getCurrentPosition() <= LMax)) {
+            if ((gamepad1.right_bumper || gamepad2.right_bumper) && (L1.getCurrentPosition() <= LMax )) {
                 RegMoveLift(1, "Going Up", ULspeed);
-            } else if ((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin)) {
+            } else if((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin )) {
                 RegMoveLift(-1, "Going Down", DLspeed);
-            } //else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
-//                L1.setPower(0);
-//            }
+            } else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
+                L1.setPower(0.005);
+            }
 
             if ((gamepad1.dpad_up || gamepad2.dpad_up) && L1.getCurrentPosition() != TopLift) {
                 LTarget = MoveLift(TopLift);
                 PickServo.setPosition(TopPick);
-            } else if ((gamepad1.dpad_left || gamepad2.dpad_left) && L1.getCurrentPosition() != MiddleLift) {
+            } else if ((gamepad1.dpad_left  || gamepad2.dpad_left) && L1.getCurrentPosition() != MiddleLift) {
                 LTarget = MoveLift(MiddleLift);
             } else if ((gamepad1.dpad_down || gamepad2.dpad_down) && L1.getCurrentPosition() != BottomLift) {
                 LTarget = MoveLift(BottomLift);
             } else if ((gamepad1.dpad_right || gamepad2.dpad_right) && L1.getCurrentPosition() != ConeLift) {
-                PickServo.setPosition(BottomPick);
-                Pickopen = true;
                 LTarget = MoveLift(ConeLift);
             }
 
-//            if (LTarget != 0) {
-//                if (L1.getCurrentPosition() > LTarget) {
-//                    L1.setPower(DLspeed);
-//                } else {
-//                    L1.setPower(ULspeed);
-//                }
-//            }
+            if (LTarget != 0) {
+                if (L1.getCurrentPosition() > LTarget){
+                    L1.setPower(DLspeed);
+                } else{
+                    L1.setPower(ULspeed);
+                }
+            }
 
-            if ((gamepad1.a || gamepad2.a) && Lopen/* && LServo.getPosition() == BottomL*/) {
+            //claw
+            //if something keeps being weird with claw
+            // if (gamepad1.a || gamepad2.a){
+            // Lservo.setPosition(TopL);
+            // }
+            //if (gamepad1.x || gamepad2.x){
+            // Lservo.setPosition(BottomL);
+            // }
+            //
+            //
+            //
+
+            if (ClawBlock == 0) {
+                if ((gamepad1.a || gamepad2.a) && Lopen) {
 //                    sleep(500);
-                Lopen = false;
-                LServo.setPosition(TopL);
-                telemetry.addData("Jaw Status: ", "Closing");
-            } else if ((gamepad1.a || gamepad2.a) && !Lopen/* && LServo.getPosition() == TopL*/) {
+                    Lopen = false;
+                    LServo.setPosition(TopL);
+                } else if ((gamepad1.a || gamepad2.a) && !Lopen) {
 //                    sleep(500);
-                Lopen = true;
-                LServo.setPosition(BottomL);
-                telemetry.addData("Jaw Status: ", "Opening");
+                    Lopen = true;
+                    LServo.setPosition(BottomL);
+                }
+            } else if(ClawBlock >= 20000){
+                ClawBlock = 0;
+            } else{
+                ClawBlock += 1;
             }
 
             //pick lower
-            if ((gamepad1.b || gamepad2.b) && Pickopen) {
-                sleep(500);
-                Pickopen = false;
-                PickServo.setPosition(TopPick);
-            } else if ((gamepad1.b || gamepad2.b) && !Pickopen) {
-                sleep(500);
-                Pickopen = true;
-                PickServo.setPosition(BottomPick);
+            if (PickBlock == 0) {
+                if ((gamepad1.b || gamepad2.b) && Pickopen) {
+                    sleep(500);
+                    Pickopen = false;
+                    PickServo.setPosition(TopPick);
+                } else if ((gamepad1.b || gamepad2.b) && !Pickopen) {
+                    sleep(500);
+                    Pickopen = true;
+                    PickServo.setPosition(BottomPick);
+                }
+            } else if(PickBlock >= 20000){
+                PickBlock = 0;
+            } else{
+                PickBlock += 1;
             }
 
-//            //fuck lift restrictions
+            //fuck lift restrictions
             if (gamepad1.y || gamepad2.y) {
                 LMin = L1.getCurrentPosition();
                 LMax = LMin + 4000;
@@ -185,8 +204,6 @@ public class T1 extends LinearOpMode {
                 MiddleLift = LMin + 2189;
                 TopLift = LMin + 2718;
                 ConeLift = LMin + 614;
-                L1.setPower(0);
-                L1.setTargetPosition(0);
             }
 
             FL.setPower(FLP);
@@ -203,17 +220,17 @@ public class T1 extends LinearOpMode {
         }
     }
 
-    private int MoveLift(int GoalPos) {
+    private int MoveLift(int GoalPos){
         L1.setTargetPosition(GoalPos);
         L1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         L1.setTargetPosition(GoalPos);
         return GoalPos;
     }
 
-    private void RegMoveLift(int down, String status, double speed) {
+    private void RegMoveLift(int down, String status, double speed){
         LTarget = 0;
         L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        L1.setPower(speed * -down);
+        L1.setPower(speed * down);
         telemetry.addData("Status", status);
     }
 }

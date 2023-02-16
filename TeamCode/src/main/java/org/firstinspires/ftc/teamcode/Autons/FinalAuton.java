@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
 
-@Autonomous(name = "Complex Auton moves right", group = "Robot")
+@Autonomous(name = "Complex Auton practicing moves right", group = "Robot")
 public class FinalAuton extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -54,9 +54,10 @@ public class FinalAuton extends LinearOpMode {
     //encoders
     static final double COUNTS_PER_MOTOR_REV = 1440;
     static final double DRIVE_GEAR_REDUCTION = 1.0;
-    static final double WHEEL_DIAMETER_INCHES = 4.0;
+    static final double WHEEL_DIAMETER_INCHES = 4;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
+    static final double DETECTION_LIMIT = 500;
 
     //gry
     private BNO055IMU imu = null;
@@ -80,6 +81,9 @@ public class FinalAuton extends LinearOpMode {
     //servo Vars
     private Servo LServo = null;
     private Servo PServo = null;
+    private Servo clawservo2 = null;
+    private double TopL = 0;
+    private double BottomL = .3;
 
     //lift Vars
     private DcMotor L1 = null;
@@ -165,6 +169,7 @@ public class FinalAuton extends LinearOpMode {
         L1 = hardwareMap.get(DcMotor.class, "lift1");
         LServo = hardwareMap.get(Servo.class, "LServo");
         PServo = hardwareMap.get(Servo.class, "PickServo");
+        clawservo2 = hardwareMap.get(Servo.class, "clawservo2");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.FORWARD);
@@ -215,6 +220,7 @@ public class FinalAuton extends LinearOpMode {
             // getLatestDetections() method which will always return an object.
             ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
 
+
             // If there's been a new frame...
             if (detections != null) {
                 telemetry.addData("FPS", camera.getFps());
@@ -223,9 +229,16 @@ public class FinalAuton extends LinearOpMode {
 
                 // If we don't see any tags
                 if (detected) {
-                    telemetry.addData("Status", "Already detected, stopping");
+                    telemetry.addData("Detection Status", "Already detected, stopping");
                 } else if (detections.size() == 0) {
                     numFramesWithoutDetection++;
+
+                    if (numFramesWithoutDetection == DETECTION_LIMIT) {
+                        telemetry.addData("Detection Status", "Detection Limit Reached, Going to Zone 2");
+                        encoderDrive(1,7.5,false,1000,true);
+                        detected = true;
+                        continue;
+                    }
 
                     // If we haven't seen a tag for a few frames, lower the decimation
                     // so we can hopefully pick one up if we're e.g. far back
@@ -254,25 +267,28 @@ public class FinalAuton extends LinearOpMode {
                         switch (detectedId) {
                             case 1: {
                                 grabConeRoutine();
-                                LServo.setPosition(0);
-                                encoderDrive(0.25, 6.5, true, 10000, true);
-                                encoderDrive(0.2, 13, false, 10000, true);
-                                LServo.setPosition(.0);
-                                encoderDrive(0.5, -3, true, 10000, true);
+                                LServo.setPosition(TopL);
+                                encoderDrive(0.25, 7, true, 10000, true);
+                                encoderDrive(0.2, 6, false, 10000, true);
+
+                                LServo.setPosition(TopL);
+                                encoderDrive(0.5, -3.5, true, 10000, true);
                                 encoderDrive(.5, 1, false, 1000, true);
 
 
-                                LiftPosSet(TopLift, 1, true);
+                                LiftPosSet(2000, 1, true);
+                                sleep(1000);
+                                LServo.setPosition(BottomL);
+                                sleep(2000);
+                                PServo.setPosition(1);
+                                clawservo2.setPosition(0);
+                                sleep(2000);
+                                LServo.setPosition(TopL);
 
-                                LServo.setPosition(1);
-                                sleep(2000);
-                                PServo.setPosition(.5);
-                                sleep(2000);
-                                LServo.setPosition(0);
                                 sleep(250);
-                                encoderDrive(.5, -3.5, true, 10000, true);
-                                encoderDrive(.5, -6.5, false, 1000, true);
-                                encoderDrive(.5, -6.5, true, 1000, true);
+                                //encoderDrive(.5, -3.5, true, 10000, true);
+                                //encoderDrive(.5, -6.5, false, 1000, true);
+                                encoderDrive(.5, -8, true, 1000, true);
 
                                 LiftPosSet(ConeLift, 1, true);
                                 encoderDrive(.5,.001,false,10000,true);
@@ -283,41 +299,46 @@ public class FinalAuton extends LinearOpMode {
                             case 2: {
                                 grabConeRoutine();
 
-                                LServo.setPosition(0);
-                                encoderDrive(0.25, 6.5, true, 10000, true);
-                                encoderDrive(0.2, 13, false, 10000, true);
-                                LServo.setPosition(.0);
-                                encoderDrive(0.5, -3.75, true, 10000, true);
-                                encoderDrive(.5, 1, false, 1000, true);
-                                LiftPosSet(250, 1, true);
+                                LServo.setPosition(TopL);
+                                encoderDrive(0.25, 7, true, 10000, true);
+                                encoderDrive(0.2, 6, false, 10000, true);
 
-                                LServo.setPosition(1);
+                                LServo.setPosition(TopL);
+                                encoderDrive(0.5, -3.5, true, 10000, true);
+                                encoderDrive(.5, 1, false, 1000, true);
+                                LiftPosSet(2000, 1, true);
+                                sleep(1000);
+                                LServo.setPosition(BottomL);
                                 sleep(2000);
-                                PServo.setPosition(.5);
+                                PServo.setPosition(1);
+                                clawservo2.setPosition(0);
+
                                 sleep(2000);
-                                LServo.setPosition(0);
+                                LServo.setPosition(TopL);
                                 sleep(200);
 
-                                encoderDrive(.5, -3, true, 10000, true);
+                                encoderDrive(.5, -2.75, true, 10000, true);
                                 LiftPosSet(ConeLift, 1,true);
                                 encoderDrive(.5,.001,false,10000,true);
                                 break;
                             }
                             case 3: {
                                 grabConeRoutine();
-                                LServo.setPosition(0);
-                                encoderDrive(0.25, 6.5, true, 10000, true);
-                                encoderDrive(0.2, 13, false, 10000, true);
-                                LServo.setPosition(.0);
-                                encoderDrive(0.5, -3.9, true, 10000, true);
-                                encoderDrive(.5, .75, false, 10000, true);
-                                LiftPosSet(225, 1,true);
+                                LServo.setPosition(TopL);
+                                encoderDrive(0.25, 7, true, 10000, true);
+                                encoderDrive(0.2, 6, false, 10000, true);
 
-                                LServo.setPosition(1);
+                                LServo.setPosition(.0);
+                                encoderDrive(0.5, -3.5, true, 10000, true);
+                                encoderDrive(.5, .75, false, 10000, true);
+                                LiftPosSet(MiddleLift, 1,true);
+                                sleep(1000);
+                                LServo.setPosition(BottomL);
                                 sleep(2000);
-                                PServo.setPosition(1);
+                                PServo.setPosition(0);
+                                clawservo2.setPosition(1);
                                 sleep(2000);
-                                LServo.setPosition(0);
+                                LServo.setPosition(TopL);
                                 sleep(200);
 
                                 encoderDrive(.5, 4, true, 10000, true);
@@ -459,6 +480,29 @@ public class FinalAuton extends LinearOpMode {
         headingOffset = getRawHeading();
         robotHeading = 0;
     }
+    public void holdHeading(double maxTurnSpeed, double heading, double holdTime) {
+
+        ElapsedTime holdTimer = new ElapsedTime();
+        holdTimer.reset();
+
+        // keep looping while we have time remaining.
+        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
+            // Determine required steering to keep on heading
+            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+
+            // Clip the speed to the maximum permitted value.
+            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
+
+            // Pivot in place by applying the turning correction
+            moveRobot(0, turnSpeed);
+
+
+        }
+
+        // Stop all motion;
+        moveRobot(0, 0);
+    }
+
 
     public void LiftPosSet(int LiftTo, double speed, boolean sleep) {
 
