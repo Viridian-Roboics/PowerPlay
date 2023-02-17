@@ -21,8 +21,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
 
-@Autonomous(name = "Complex Auton", group = "Robot")
-public class ActualAuton extends LinearOpMode {
+@Autonomous(name = "AutonTesting", group = "Robot")
+public class Autontesting extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 

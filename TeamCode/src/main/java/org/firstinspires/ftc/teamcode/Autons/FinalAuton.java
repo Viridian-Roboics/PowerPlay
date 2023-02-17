@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
 
-@Autonomous(name = "Complex Auton practicing moves right", group = "Robot")
+@Autonomous(name = "Complex Auton  moves right", group = "Robot")
 public class FinalAuton extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -84,6 +84,7 @@ public class FinalAuton extends LinearOpMode {
     private Servo clawservo2 = null;
     private double TopL = 0;
     private double BottomL = .3;
+
 
     //lift Vars
     private DcMotor L1 = null;
@@ -276,7 +277,7 @@ public class FinalAuton extends LinearOpMode {
                                 encoderDrive(.5, 1, false, 1000, true);
 
 
-                                LiftPosSet(2000, 1, true);
+                                LiftPosSet(1500, 1, true);
                                 sleep(1000);
                                 LServo.setPosition(BottomL);
                                 sleep(2000);
@@ -288,7 +289,7 @@ public class FinalAuton extends LinearOpMode {
                                 sleep(250);
                                 //encoderDrive(.5, -3.5, true, 10000, true);
                                 //encoderDrive(.5, -6.5, false, 1000, true);
-                                encoderDrive(.5, -8, true, 1000, true);
+                                encoderDrive(.5, -11.5, true, 1000, true);
 
                                 LiftPosSet(ConeLift, 1, true);
                                 encoderDrive(.5,.001,false,10000,true);
@@ -306,7 +307,7 @@ public class FinalAuton extends LinearOpMode {
                                 LServo.setPosition(TopL);
                                 encoderDrive(0.5, -3.5, true, 10000, true);
                                 encoderDrive(.5, 1, false, 1000, true);
-                                LiftPosSet(2000, 1, true);
+                                LiftPosSet(1500, 1, true);
                                 sleep(1000);
                                 LServo.setPosition(BottomL);
                                 sleep(2000);
@@ -331,12 +332,12 @@ public class FinalAuton extends LinearOpMode {
                                 LServo.setPosition(.0);
                                 encoderDrive(0.5, -3.5, true, 10000, true);
                                 encoderDrive(.5, .75, false, 10000, true);
-                                LiftPosSet(MiddleLift, 1,true);
+                                LiftPosSet(1500, 1,true);
                                 sleep(1000);
                                 LServo.setPosition(BottomL);
                                 sleep(2000);
-                                PServo.setPosition(0);
-                                clawservo2.setPosition(1);
+                                PServo.setPosition(1);
+                                clawservo2.setPosition(0);
                                 sleep(2000);
                                 LServo.setPosition(TopL);
                                 sleep(200);
@@ -505,6 +506,7 @@ public class FinalAuton extends LinearOpMode {
 
 
     public void LiftPosSet(int LiftTo, double speed, boolean sleep) {
+
 
         L1.setTargetPosition(LiftTo);
         L1.setPower(1);

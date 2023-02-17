@@ -81,6 +81,10 @@ public class Autonmovesleft extends LinearOpMode {
     //servo Vars
     private Servo LServo = null;
     private Servo PServo = null;
+    private Servo clawservo2 = null;
+    private double TopL = 0;
+    private double BottomL = .3;
+
 
     //lift Vars
     private DcMotor L1 = null;
@@ -166,6 +170,7 @@ public class Autonmovesleft extends LinearOpMode {
         L1 = hardwareMap.get(DcMotor.class, "lift1");
         LServo = hardwareMap.get(Servo.class, "LServo");
         PServo = hardwareMap.get(Servo.class, "PickServo");
+        clawservo2 = hardwareMap.get(Servo.class, "clawservo2");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.FORWARD);
@@ -255,26 +260,30 @@ public class Autonmovesleft extends LinearOpMode {
                         switch (detectedId) {
                             case 1: {
                                 grabConeRoutine();
-                                LServo.setPosition(0);
-                                encoderDrive(0.25, -6.5, true, 10000, true);
-                                encoderDrive(0.2, 13, false, 10000, true);
-                                LServo.setPosition(.0);
-                                encoderDrive(0.5, 3, true, 10000, true);
-                                encoderDrive(.5, 1, false, 10000, true);
+                                LServo.setPosition(TopL);
+                                encoderDrive(0.25, -7, true, 10000, true);
+                                encoderDrive(0.2, 6, false, 10000, true);
+
+                                LServo.setPosition(TopL);
+                                encoderDrive(0.5, 3.5, true, 10000, true);
+                                encoderDrive(.5, 1, false, 1000, true);
 
 
-                                LiftPosSet(TopLift, 1,true);
-
-                                LServo.setPosition(1);
+                                LiftPosSet(1500, 1, true);
+                                sleep(1000);
+                                LServo.setPosition(BottomL);
                                 sleep(2000);
-                                PServo.setPosition(.5);
+                                PServo.setPosition(1);
+                                clawservo2.setPosition(0);
                                 sleep(2000);
-                                LServo.setPosition(0);
+                                LServo.setPosition(TopL);
+
                                 sleep(250);
-                                encoderDrive(.5, -4, true, 10000, true);
+                                //encoderDrive(.5, -3.5, true, 10000, true);
+                                //encoderDrive(.5, -6.5, false, 1000, true);
+                                encoderDrive(.5, -4.5, true, 1000, true);
 
-
-                                LiftPosSet(ConeLift, 1,true);
+                                LiftPosSet(ConeLift, 1, true);
                                 encoderDrive(.5,.001,false,10000,true);
 
                                 // case 1
@@ -283,47 +292,51 @@ public class Autonmovesleft extends LinearOpMode {
                             case 2: {
                                 grabConeRoutine();
 
-                                LServo.setPosition(0);
-                                encoderDrive(0.25, -6.5, true, 10000, true);
-                                encoderDrive(0.2, 13, false, 10000, true);
-                                LServo.setPosition(.0);
-                                encoderDrive(0.5, 3.75, true, 10000, true);
-                                encoderDrive(.5, 1, false, 1000, true);
-                                LiftPosSet(250, 1,true);
+                                LServo.setPosition(TopL);
+                                encoderDrive(0.25, -7, true, 10000, true);
+                                encoderDrive(0.2, 6, false, 10000, true);
 
-                                LServo.setPosition(1);
+                                LServo.setPosition(TopL);
+                                encoderDrive(0.5, 3.5, true, 10000, true);
+                                encoderDrive(.5, 1, false, 1000, true);
+                                LiftPosSet(1500, 1, true);
+                                sleep(1000);
+                                LServo.setPosition(BottomL);
                                 sleep(2000);
-                                PServo.setPosition(.5);
+                                PServo.setPosition(1);
+                                clawservo2.setPosition(0);
+
                                 sleep(2000);
-                                LServo.setPosition(0);
+                                LServo.setPosition(TopL);
                                 sleep(200);
 
-                                encoderDrive(.5, 3, true, 10000, true);
-                                LiftPosSet(ConeLift, 1, true);
+                                encoderDrive(.5, 2.75, true, 10000, true);
+                                LiftPosSet(ConeLift, 1,true);
                                 encoderDrive(.5,.001,false,10000,true);
                                 break;
                             }
                             case 3: {
                                 grabConeRoutine();
-                                LServo.setPosition(0);
-                                encoderDrive(0.25, -6.5, true, 10000, true);
-                                encoderDrive(0.2, 13, false, 10000, true);
-                                LServo.setPosition(.0);
-                                encoderDrive(0.5, 3.9, true, 10000, true);
-                                encoderDrive(.5, .75, false, 10000, true);
-                                LiftPosSet(225, 1,true);
+                                grabConeRoutine();
+                                LServo.setPosition(TopL);
+                                encoderDrive(0.25, -7, true, 10000, true);
+                                encoderDrive(0.2, 6, false, 10000, true);
 
-                                LServo.setPosition(1);
+                                LServo.setPosition(.0);
+                                encoderDrive(0.5, 3.5, true, 10000, true);
+                                encoderDrive(.5, .75, false, 10000, true);
+                                LiftPosSet(1500, 1,true);
+                                sleep(1000);
+                                LServo.setPosition(BottomL);
                                 sleep(2000);
                                 PServo.setPosition(1);
+                                clawservo2.setPosition(0);
                                 sleep(2000);
-                                LServo.setPosition(0);
+                                LServo.setPosition(TopL);
                                 sleep(200);
 
-                                encoderDrive(.5, 3.5, true, 10000, true);
-                                encoderDrive(.5, -6.5, false, 1000, true);
-                                encoderDrive(.5, 6.5, true, 1000, true);
-                                LiftPosSet(ConeLift, 1, true);
+                                encoderDrive(.5, 11.5, true, 10000, true);
+                                LiftPosSet(ConeLift, 1,true);
                                 encoderDrive(.5,.001,false,10000,true);
                                 break;
                             }
