@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 // input buttons leftover: x
 // lift1     lift2
-@TeleOp(name = "T1")
-public class T1 extends LinearOpMode {
+@TeleOp(name = "DLT1")
+public class DLT1 extends LinearOpMode {
     static final double COUNTS_PER_MOTOR_REV = 1440;
     static final double DRIVE_GEAR_REDUCTION = 1.0;
     static final double WHEEL_DIAMETER_INCHES = 4.0;
@@ -55,7 +55,7 @@ public class T1 extends LinearOpMode {
 
     //main grabber
     private double TopL = .1;
-    private double BottomL = .3;
+    private double BottomL = .4;
     private int ClawBlock = 0;
     private int PickBlock = 0;
 
@@ -144,7 +144,7 @@ public class T1 extends LinearOpMode {
             } else if ((gamepad1.left_bumper || gamepad2.left_bumper) && (L1.getCurrentPosition() >= LMin)) {
                 RegMoveLift(-1, "Going Down", DLspeed);
             } else if (LTarget == 0 || LTarget == L1.getCurrentPosition()) {
-                L1.setPower(0.00);
+                L1.setPower(0.005);
             } else if (gamepad1.right_bumper == false || gamepad2.right_bumper == false) {
                 L1.setPower(0);
             } else if (gamepad2.left_bumper == false || gamepad2.left_bumper == false) {
@@ -222,17 +222,16 @@ public class T1 extends LinearOpMode {
                     turnDegrees(-90);
                     turned = true;
                 }
-                sleep(500);
             }
 
             if (gamepad1.x){
                 if (!moved) {
-                    encoderDrive(moveSpeed*moveSpeedMultiplier, moveForwardDist, false, 10000, true);
-                    encoderDrive(moveSpeed*moveSpeedMultiplier, directionalOffset, true, 10000, true);
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, moveForwardDist, false, 10000, false);
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, directionalOffset, true, 10000, false);
                     moved = true;
                 } else {
-                    encoderDrive(moveSpeed*moveSpeedMultiplier, -directionalOffset, true, 10000, true);
-                    encoderDrive(moveSpeed*moveSpeedMultiplier, -moveForwardDist, false, 10000, true);
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, -directionalOffset, true, 10000, false);
+                    encoderDrive(moveSpeed*moveSpeedMultiplier, -moveForwardDist, false, 10000, false);
                     moved = false;
                 }
             }
