@@ -278,7 +278,7 @@ public class FinalAuton extends LinearOpMode {
                                 encoderDrive(.5, 1, false, 1000, true);
 
 
-                                MoveLift(2100, 1, true);
+                                MoveLift(2500, 1, true);
                                 sleep(1000);
                                 LServo.setPosition(BottomL);
                                 sleep(2000);
@@ -308,7 +308,7 @@ public class FinalAuton extends LinearOpMode {
                                 LServo.setPosition(TopL);
                                 encoderDrive(0.5, -3.5, true, 10000, true);
                                 encoderDrive(.5, 1, false, 1000, true);
-                                MoveLift(2100, 1, true);
+                                MoveLift(2500, 1, true);
                                 sleep(1000);
                                 LServo.setPosition(BottomL);
                                 sleep(2000);
@@ -333,7 +333,7 @@ public class FinalAuton extends LinearOpMode {
                                 LServo.setPosition(.0);
                                 encoderDrive(0.5, -3.5, true, 10000, true);
                                 encoderDrive(.5, .75, false, 10000, true);
-                                MoveLift(2100, 1,true);
+                                MoveLift(2500, 1,true);
                                 sleep(1000);
                                 LServo.setPosition(BottomL);
                                 sleep(2000);
