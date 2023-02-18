@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 // lift1     lift2
 @Disabled
 @Autonomous(name="pAuton 1")
-public class practiceauton extends LinearOpMode{
+public class practiceauton extends LinearOpMode {
     //motors
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor FL = null;
@@ -26,17 +26,17 @@ public class practiceauton extends LinearOpMode{
     private DcMotor BR = null;
 
     //encoders
-    static final double COUNTS_PER_MOTOR_REV = 384.5 ;
-    static final double DRIVE_GEAR_REDUCTION = 1.0 ;
-    static final double WHEEL_DIAMETER_INCHES = 3.5 ;
+    static final double COUNTS_PER_MOTOR_REV = 384.5;
+    static final double DRIVE_GEAR_REDUCTION = 1.0;
+    static final double WHEEL_DIAMETER_INCHES = 3.5;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.7;
 
     //gryo
     private BNO055IMU imu = null;
-    private double robotHeading  = 0;
+    private double robotHeading = 0;
     private double headingOffset = 0;
-    private double headingError  = 0;
+    private double headingError = 0;
 
     private double targetHeading = 0;
     private double driveSpeed = 0;
@@ -106,9 +106,7 @@ public class practiceauton extends LinearOpMode{
         runtime.reset();
 
         //movement code
-        encoderDrive(.75, 12, false, 10000);
-        encoderDrive(.25, -8, true, 10000);
-
+        LiftPosSet(1500, .5, true);
     }
 
     public void encoderDrive(double speed, double MoveIN, boolean strafe, double timeoutS) {
@@ -125,8 +123,8 @@ public class practiceauton extends LinearOpMode{
             FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            newMoveTarget = FL.getCurrentPosition() + (int)(MoveIN * COUNTS_PER_INCH);
-            if (!strafe){
+            newMoveTarget = FL.getCurrentPosition() + (int) (MoveIN * COUNTS_PER_INCH);
+            if (!strafe) {
                 FL.setTargetPosition(newMoveTarget);
                 FR.setTargetPosition(newMoveTarget);
                 BL.setTargetPosition(newMoveTarget);
@@ -142,8 +140,7 @@ public class practiceauton extends LinearOpMode{
                 FR.setPower(Math.abs(speed));
                 BL.setPower(Math.abs(speed));
                 BR.setPower(Math.abs(speed));
-            }
-            else{
+            } else {
 
                 FL.setTargetPosition(newMoveTarget);
                 FR.setTargetPosition(-newMoveTarget);
@@ -164,7 +161,7 @@ public class practiceauton extends LinearOpMode{
 
             while (opModeIsActive() && (runtime.seconds() < timeoutS) && (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
                 telemetry.addData("Running to", " %7d", newMoveTarget);
-                telemetry.addData("Currently at",  " at %7d :%7d :%7d :%7d", FL.getCurrentPosition(), FR.getCurrentPosition(), BL.getCurrentPosition(), BR.getCurrentPosition());
+                telemetry.addData("Currently at", " at %7d :%7d :%7d :%7d", FL.getCurrentPosition(), FR.getCurrentPosition(), BL.getCurrentPosition(), BR.getCurrentPosition());
                 telemetry.update();
             }
 
@@ -195,14 +192,13 @@ public class practiceauton extends LinearOpMode{
 
     public void moveRobot(double drive, double turn) {
         driveSpeed = drive;
-        turnSpeed  = turn;
+        turnSpeed = turn;
 
-        leftSpeed  = drive - turn;
+        leftSpeed = drive - turn;
         rightSpeed = drive + turn;
 
         double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-        if (max > 1.0)
-        {
+        if (max > 1.0) {
             leftSpeed /= max;
             rightSpeed /= max;
         }
@@ -218,7 +214,7 @@ public class practiceauton extends LinearOpMode{
         robotHeading = getRawHeading() - headingOffset;
         headingError = targetHeading - robotHeading;
 
-        while (headingError > 180)  headingError -= 360;
+        while (headingError > 180) headingError -= 360;
         while (headingError <= -180) headingError += 360;
 
         return Range.clip(headingError * proportionalGain, -1, 1);
@@ -234,19 +230,15 @@ public class practiceauton extends LinearOpMode{
         robotHeading = 0;
     }
 
-    public void LiftPosSet(int LiftTo){
-        if (LiftTo > L1.getCurrentPosition()) {
-            L1.setTargetPosition(LiftTo);
-            L2.setTargetPosition(LiftTo);
-            L1.setPower(1);
-            L2.setPower(1);
-        }
-        if (L1.isBusy()){
+    public void LiftPosSet(int LiftTo, double speed, boolean sleep) {
 
-        }
-        else{
-            L1.setPower(0);
-            L2.setPower(0);
+
+        L1.setTargetPosition(LiftTo);
+        L1.setPower(1);
+        runtime.reset();
+        L1.setPower(Math.abs(speed));
+        if (sleep) {
+            sleep(100);
         }
     }
 }

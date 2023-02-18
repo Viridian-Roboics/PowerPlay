@@ -100,10 +100,8 @@ public class Autontesting extends LinearOpMode {
     void grabConeRoutine() {
         /* Basic (Untested) Routine */
 
-        encoderDrive(0.5, 6, true, 10000, true);
-        encoderDrive(0.5, 13, false, 10000, true);
-        encoderDrive(0.5, -4, true, 10000, true);
-        LiftPosSet(300,.5);
+
+
     }
 
     void turnDegrees(int degrees) {
@@ -207,10 +205,11 @@ public class Autontesting extends LinearOpMode {
             }
 
         });
-
+        L1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         waitForStart();
 
         telemetry.setMsTransmissionInterval(50);
+
 
         while (opModeIsActive()) {
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
@@ -224,6 +223,7 @@ public class Autontesting extends LinearOpMode {
                 telemetry.addData("FPS", camera.getFps());
                 telemetry.addData("Overhead ms", camera.getOverheadTimeMs());
                 telemetry.addData("Pipeline ms", camera.getPipelineTimeMs());
+                telemetry.addData ("Current position", L1.getCurrentPosition());
 
                 // If we don't see any tags
                 if (detected) {
@@ -259,8 +259,7 @@ public class Autontesting extends LinearOpMode {
                         switch (detectedId) {
                             case 1: {
                                 grabConeRoutine();
-                                //encoderDrive(moveSpeed, moveForwardDist, false, 1000, true);
-                                //encoderDrive(moveSpeed, -directionalOffset,true, 1000, true);
+                                MoveLift(500);
                                 // case 1
                                 break;
                             }
@@ -413,13 +412,27 @@ public class Autontesting extends LinearOpMode {
         robotHeading = 0;
     }
 
-    public void LiftPosSet(int LiftTo, double speed){
+//    public void LiftPosSet(int LiftTo, double speed){
+//            L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            L1.setTargetPosition(LiftTo);
+//
+//            L1.
 
-            L1.setTargetPosition(LiftTo);
-            L1.setPower(1);
-            runtime.reset();
-            L1.setPower(Math.abs(speed));
-        }
+            //L1.setPower(1);
 
+//            runtime.reset();
+//            L1.setPower(Math.abs(speed));
+
+    private int MoveLift(int GoalPos) {
+        L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        L1.setTargetPosition(GoalPos);
+        L1.setPower(.5);
+        L1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        L1.setTargetPosition(GoalPos);
+        return GoalPos;
+
+    }
 }
+
+
 

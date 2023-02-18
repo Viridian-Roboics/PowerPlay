@@ -227,6 +227,7 @@ public class FinalAuton extends LinearOpMode {
                 telemetry.addData("FPS", camera.getFps());
                 telemetry.addData("Overhead ms", camera.getOverheadTimeMs());
                 telemetry.addData("Pipeline ms", camera.getPipelineTimeMs());
+                telemetry.addData ("Current position", L1.getCurrentPosition());
 
                 // If we don't see any tags
                 if (detected) {
@@ -277,21 +278,21 @@ public class FinalAuton extends LinearOpMode {
                                 encoderDrive(.5, 1, false, 1000, true);
 
 
-                                LiftPosSet(1500, 1, true);
+                                MoveLift(2100, 1, true);
                                 sleep(1000);
                                 LServo.setPosition(BottomL);
                                 sleep(2000);
                                 PServo.setPosition(1);
                                 clawservo2.setPosition(0);
                                 sleep(2000);
-                                LServo.setPosition(TopL);
+                                LServo.setPosition(.1);
 
                                 sleep(250);
                                 //encoderDrive(.5, -3.5, true, 10000, true);
                                 //encoderDrive(.5, -6.5, false, 1000, true);
                                 encoderDrive(.5, -11.5, true, 1000, true);
 
-                                LiftPosSet(ConeLift, 1, true);
+                                MoveLift(ConeLift, 1, true);
                                 encoderDrive(.5,.001,false,10000,true);
 
                                 // case 1
@@ -307,7 +308,7 @@ public class FinalAuton extends LinearOpMode {
                                 LServo.setPosition(TopL);
                                 encoderDrive(0.5, -3.5, true, 10000, true);
                                 encoderDrive(.5, 1, false, 1000, true);
-                                LiftPosSet(1500, 1, true);
+                                MoveLift(2100, 1, true);
                                 sleep(1000);
                                 LServo.setPosition(BottomL);
                                 sleep(2000);
@@ -319,7 +320,7 @@ public class FinalAuton extends LinearOpMode {
                                 sleep(200);
 
                                 encoderDrive(.5, -2.75, true, 10000, true);
-                                LiftPosSet(ConeLift, 1,true);
+                                MoveLift(ConeLift, 1,true);
                                 encoderDrive(.5,.001,false,10000,true);
                                 break;
                             }
@@ -332,7 +333,7 @@ public class FinalAuton extends LinearOpMode {
                                 LServo.setPosition(.0);
                                 encoderDrive(0.5, -3.5, true, 10000, true);
                                 encoderDrive(.5, .75, false, 10000, true);
-                                LiftPosSet(1500, 1,true);
+                                MoveLift(2100, 1,true);
                                 sleep(1000);
                                 LServo.setPosition(BottomL);
                                 sleep(2000);
@@ -343,7 +344,7 @@ public class FinalAuton extends LinearOpMode {
                                 sleep(200);
 
                                 encoderDrive(.5, 4, true, 10000, true);
-                                LiftPosSet(ConeLift, 1,true);
+                                MoveLift(ConeLift, 1,true);
                                 encoderDrive(.5,.001,false,10000,true);
                                 break;
                             }
@@ -505,17 +506,29 @@ public class FinalAuton extends LinearOpMode {
     }
 
 
-    public void LiftPosSet(int LiftTo, double speed, boolean sleep) {
+//    public void LiftPosSet(int LiftTo, double speed, boolean sleep) {
+//
+//
+//        L1.setTargetPosition(LiftTo);
+//        L1.setPower(1);
+//        runtime.reset();
+//        L1.setPower(Math.abs(speed));
+//        if (sleep) {
+//            sleep(100);
+//        }
 
-
-        L1.setTargetPosition(LiftTo);
-        L1.setPower(1);
-        runtime.reset();
-        L1.setPower(Math.abs(speed));
-        if (sleep) {
+    private int MoveLift(int GoalPos, double speed, boolean sleep) {
+        L1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        L1.setTargetPosition(GoalPos);
+        L1.setPower(speed);
+        L1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        L1.setTargetPosition(GoalPos);
+        if (sleep){
             sleep(100);
         }
+        return GoalPos;
 
 
     }
-}
+
+    }
